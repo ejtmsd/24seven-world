@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=960">
+<title>24 Seven x Anthropic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#04040a;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:'DM Sans',sans-serif;color:#fff;overflow:hidden}
+#game-wrapper{position:relative;width:960px;user-select:none}
+canvas{display:block;cursor:none}
+/* HUD */
+#hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;pointer-events:none;z-index:10}
+#hud-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#fff;text-shadow:0 0 20px rgba(255,255,255,.15)}
+#hud-logo span{color:#FF5300}
+#hud-pips{display:flex;gap:10px;align-items:center}
+.pip{width:14px;height:14px;border-radius:50%;border:2px solid #2a2a3a;background:transparent;transition:all .6s cubic-bezier(.4,0,.2,1)}
+.pip.visited{border-color:transparent;transform:scale(1.15)}
+/* Contact strip */
+#contact-strip{background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.06);padding:8px 20px;display:flex;justify-content:center;align-items:center;gap:24px;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.5)}
+#contact-strip a{color:#FF5300;text-decoration:none;font-weight:500;transition:color .2s}
+#contact-strip a:hover{color:#ff7733}
+#contact-strip .sep{color:rgba(255,255,255,.15)}
+/* Ticker */
+#ticker{background:#06060e;height:36px;display:flex;align-items:center;overflow:hidden;border-top:1px solid rgba(255,255,255,.04);position:relative}
+#ticker-live{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 14px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:1px;color:#ff3333;z-index:2;background:#06060e}
+#ticker-live::after{content:'';position:absolute;right:0;top:0;bottom:0;width:30px;background:linear-gradient(90deg,transparent,#06060e);z-index:1}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#ff3333;animation:livePulse 1.5s infinite}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:.3}}
+#ticker-track-wrap{flex:1;overflow:hidden;position:relative}
+#ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 90s linear infinite;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.55);letter-spacing:.3px}
+#ticker-track span{padding-right:0}
+@keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+/* Prompt */
+#interact-prompt{position:absolute;pointer-events:none;font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.7);letter-spacing:1px;text-align:center;transition:opacity .25s;z-index:5;text-shadow:0 2px 8px rgba(0,0,0,.9)}
+/* Modal overlay */
+#modal-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(2,2,6,.9);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:50}
+#modal-overlay.open{display:flex}
+#modal-card{width:540px;max-height:520px;overflow-y:auto;background:#0a0a16;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:36px 40px 32px;position:relative}
+#modal-card::-webkit-scrollbar{width:4px}
+#modal-card::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;color:rgba(255,255,255,.3);font-size:20px;cursor:pointer;transition:color .2s;font-family:'DM Mono',monospace}
+.modal-close:hover{color:#fff}
+.modal-kicker{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;margin-bottom:16px}
+.modal-kicker .dot{width:8px;height:8px;border-radius:50%;animation:kickerBlink 1.2s infinite}
+@keyframes kickerBlink{0%,100%{opacity:1}50%{opacity:.2}}
+.modal-brand-name{font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:3px;line-height:1;margin-bottom:4px}
+.modal-tagline{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:24px}
+.modal-signal{border-left:3px solid;padding:14px 18px;border-radius:0 8px 8px 0;margin-bottom:22px;font-family:'DM Mono',monospace;font-size:11.5px;line-height:1.65;color:rgba(255,255,255,.75)}
+.modal-signal .signal-label{font-size:9px;letter-spacing:2px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.modal-desc{font-size:14px;line-height:1.7;color:rgba(255,255,255,.6);margin-bottom:28px}
+.modal-cta{display:block;width:100%;padding:14px;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;color:#08080f;cursor:pointer;letter-spacing:.5px;transition:filter .2s}
+.modal-cta:hover{filter:brightness(1.15)}
+/* Completion overlay */
+#completion-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(2,2,6,.92);backdrop-filter:blur(8px);display:none;justify-content:center;align-items:center;z-index:60}
+#completion-overlay.open{display:flex}
+#completion-card{text-align:center;max-width:540px;padding:48px 44px}
+.comp-eyebrow{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.4);text-transform:uppercase;margin-bottom:16px}
+.comp-headline{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:2px;line-height:1.05;margin-bottom:16px}
+.comp-sub{font-size:15px;line-height:1.7;color:rgba(255,255,255,.55);margin-bottom:32px}
+.comp-chips{display:flex;justify-content:center;gap:10px;margin-bottom:36px;flex-wrap:wrap}
+.comp-chip{padding:6px 14px;border-radius:20px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;border:1px solid}
+.comp-cta{display:inline-block;padding:16px 48px;border-radius:8px;background:#FF5300;color:#08080f;font-family:'DM Sans',sans-serif;font-size:17px;font-weight:700;text-decoration:none;letter-spacing:.5px;transition:filter .2s;margin-bottom:28px}
+.comp-cta:hover{filter:brightness(1.2)}
+.comp-contacts{font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.4);line-height:1.8}
+.comp-contacts a{color:rgba(255,255,255,.55);text-decoration:none}
+.comp-contacts a:hover{color:#fff}
+.comp-close{position:absolute;top:20px;right:24px;background:none;border:none;color:rgba(255,255,255,.25);font-size:18px;cursor:pointer;font-family:'DM Mono',monospace}
+.comp-close:hover{color:#fff}
+/* Game headline */
+#game-headline{position:absolute;top:48px;left:50%;transform:translateX(-50%);width:700px;text-align:center;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;line-height:1.5;color:rgba(255,255,255,.25);letter-spacing:.3px;pointer-events:none;z-index:5;text-shadow:0 0 20px rgba(0,0,0,.8)}
+/* Intro hint */
+#intro-hint{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:11px;color:rgba(255,255,255,.35);letter-spacing:1px;pointer-events:none;z-index:5;transition:opacity 1s;text-shadow:0 0 12px rgba(0,0,0,.9)}
+</style>
+</head>
+<body>
+<div id="game-wrapper">
+  <div id="hud">
+    <div id="hud-logo">24 SEVEN <span>x</span> ANTHROPIC</div>
+    <div id="hud-pips">
+      <div class="pip" id="pip-0" title="The Sage Group"></div>
+      <div class="pip" id="pip-1" title="SketchDeck"></div>
+      <div class="pip" id="pip-2" title="Markacy"></div>
+      <div class="pip" id="pip-3" title="Futureman"></div>
+    </div>
+  </div>
+  <canvas id="game" width="960" height="600"></canvas>
+  <div id="interact-prompt" style="opacity:0">SPACE TO DOCK</div>
+  <div id="game-headline">How Anthropic Marketing's Unique Journey Can Leverage 4 Brands Under the 24 Seven Umbrella to Make Highest Impact in the Journey Ahead</div>
+  <div id="intro-hint">WASD / ARROW KEYS TO FLY &middot; SPACE TO DOCK WITH SATELLITES</div>
+  <div id="contact-strip">
+    <span>Nicole Greene &middot; nicole@24sevengroup.com &middot; New Business</span>
+    <span class="sep">|</span>
+    <span>Elliot Miller &middot; elliot@24sevengroup.com &middot; Strategy &amp; Partnerships</span>
+    <span class="sep">|</span>
+    <a href="https://calendly.com/24sevengroup" target="_blank">Schedule a Meeting &rarr;</a>
+  </div>
+  <div id="ticker">
+    <div id="ticker-live"><span class="live-dot"></span>LIVE</div>
+    <div id="ticker-track-wrap">
+      <div id="ticker-track"><span></span></div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div id="modal-overlay">
+    <div id="modal-card">
+      <button class="modal-close" id="modal-close-btn">&times;</button>
+      <div class="modal-kicker"><span class="dot" id="modal-dot"></span><span id="modal-kicker-text"></span></div>
+      <div class="modal-brand-name" id="modal-brand-name"></div>
+      <div class="modal-tagline" id="modal-tagline"></div>
+      <div class="modal-signal" id="modal-signal">
+        <div class="signal-label" id="modal-signal-label">&#x1F4E1; LIVE SIGNAL</div>
+        <div id="modal-signal-text"></div>
+      </div>
+      <div class="modal-desc" id="modal-desc"></div>
+      <button class="modal-cta" id="modal-cta">Continue exploring &rarr;</button>
+    </div>
+  </div>
+  <!-- Completion -->
+  <div id="completion-overlay">
+    <button class="comp-close" id="comp-close-btn">&times;</button>
+    <div id="completion-card">
+      <div class="comp-eyebrow">Mission Complete &middot; 4/4 Satellites Online</div>
+      <div class="comp-headline">You know the universe.</div>
+      <div class="comp-sub">Anthropic is in the most exciting moment in AI history. 24 Seven is the creative universe that shows up when it counts. Let's build something together.</div>
+      <div class="comp-chips" id="comp-chips"></div>
+      <a class="comp-cta" href="https://calendly.com/24sevengroup" target="_blank">Schedule a Meeting &rarr;</a>
+      <div class="comp-contacts">
+        Nicole Greene &middot; <a href="mailto:nicole@24sevengroup.com">nicole@24sevengroup.com</a> &middot; New Business<br>
+        Elliot Miller &middot; <a href="mailto:elliot@24sevengroup.com">elliot@24sevengroup.com</a> &middot; Strategy &amp; Partnerships
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── DATA ─────────────────────────────────────── */
+const BRANDS = [
+  {
+    id:'sage', name:'THE SAGE GROUP', emoji:'🌿', color:'#00E5A0',
+    kicker:'Marketing Talent · The Growth Engine',
+    tagline:'EXCEPTIONAL TALENT THAT DRIVES RESULTS',
+    liveSignal:'Anthropic is targeting $26B in 2026 revenue. The marketing team is expanding globally. The Sage Group is already in the building.',
+    desc:'The Sage Group provides exceptional marketing and business operations consultants, contractors, and permanent talent that drive results for leading companies across industries. As Anthropic scales from 1,000 to 300,000+ enterprise customers — through a Super Bowl campaign, an F1 partnership, and the most turbulent news cycle in AI history — the marketing org needs to staff up fast and smart. Sage provides the consultants, contractors, and embedded talent to make that possible without slowing down.',
+    x:0, y:0
+  },
+  {
+    id:'sketchdeck', name:'SKETCHDECK', emoji:'🎨', color:'#FF5300',
+    kicker:'Creative Production · The Execution Engine',
+    tagline:'ALL THE DESIGN SERVICES YOU NEED IN ONE PLACE',
+    liveSignal:'The Super Bowl campaign needs to extend: F1 assets across 24 races in 20 countries, OOH refreshes in SF/NYC/LA/DC, streaming pre-rolls, social cuts. The brief doesn\'t stop.',
+    desc:'SketchDeck is the production engine behind creative execution at scale. Anthropic\'s "A Time and a Place" Super Bowl LX campaign ran to 120M viewers across two spots. The Williams FW48 livery just debuted in Melbourne. "Keep Thinking" OOH is live in 12 cities. Every one of those moments requires a relentless volume of on-brand assets — across formats, channels, and markets — without breaking quality or speed. That\'s SketchDeck\'s exact model.',
+    x:0, y:0
+  },
+  {
+    id:'markacy', name:'MARKACY', emoji:'📡', color:'#00C8FF',
+    kicker:'Performance Marketing · The Growth Optimizer',
+    tagline:'OPTIMIZE GROWTH INVESTMENTS FOR SUSTAINED PERFORMANCE',
+    liveSignal:'Search intent for Claude is spiking. OpenAI is spending aggressively. The window is open and competitive. Markacy turns heat into pipeline.',
+    desc:'Anthropic has had two back-to-back earned media explosions — the Super Bowl "A Time and a Place" campaign and the Pentagon standoff that drove 1M+ daily sign-ups and made Claude #1 in the App Store in 20+ countries above ChatGPT and Gemini. That\'s extraordinary consumer intent. Markacy\'s finance-first, measurement-driven approach is exactly what\'s needed to capture that window — connecting paid media and performance strategy directly to revenue outcomes before the cycle moves on.',
+    x:0, y:0
+  },
+  {
+    id:'futureman', name:'FUTUREMAN', emoji:'⚡', color:'#FFD600',
+    kicker:'Experiential & Creative · The Experience Builder',
+    tagline:'HIGH-IMPACT ACTIVATIONS THAT MAKE BRANDS REAL',
+    liveSignal:'F1 season is live. Claude Labs is shipping. The experiential opportunities haven\'t been designed yet — Futureman designs them.',
+    desc:'Anthropic\'s NYC pop-up in October 2025 drew 5,000 people and 10M+ social impressions. Claude Labs launched in January 2026, led by Instagram co-founder Mike Krieger, shipping experimental AI products. Williams F1 opens a global fanbase of 500M+ across 24 races in 20 countries. The brand is culturally primed — "Keep Thinking" is a platform, not just a tagline. Futureman builds the activations and experiences that make that real in the world.',
+    x:0, y:0
+  }
+];
+
+const ORBITS = [
+  { radius: 200, speed:  0.0010, angle0: Math.PI * 1.25 },
+  { radius: 225, speed: -0.0007, angle0: Math.PI * 1.78 },
+  { radius: 210, speed:  0.0008, angle0: Math.PI * 0.28 },
+  { radius: 190, speed: -0.0009, angle0: Math.PI * 0.75 }
+];
+
+const TICKER_TEXT = '⚡ ANTHROPIC REVENUE HITS $19B ARR — TARGETING $26B BY YEAR END  ·  ⚠️ PENTAGON DESIGNATES ANTHROPIC "SUPPLY CHAIN RISK" — FIRST US COMPANY EVER — DARIO AMODEI VOWS LEGAL FIGHT  ·  📈 1M+ CLAUDE SIGN-UPS PER DAY — #1 APP IN 20+ COUNTRIES ABOVE CHATGPT AND GEMINI  ·  🏎️ CLAUDE NAMED OFFICIAL THINKING PARTNER OF ATLASSIAN WILLIAMS F1 — FW48 LIVERY REVEALED IN MELBOURNE  ·  🎬 "A TIME AND A PLACE" SUPER BOWL LX — 120M VIEWERS, MOTHER AGENCY, DR. DRE SOUNDTRACK  ·  💬 DARIO AMODEI: "NO AMOUNT OF INTIMIDATION WILL CHANGE OUR POSITION"  ·  🌍 300,000+ ENTERPRISE CUSTOMERS — NOVO NORDISK, BRIDGEWATER, STRIPE, SLACK USE CLAUDE AT SCALE  ·  🚀 CLAUDE LABS LAUNCHED JAN 2026 — MIKE KRIEGER (INSTAGRAM CO-FOUNDER) LEADING EXPERIMENTAL AI  ·  🤝 THE SAGE GROUP ALREADY ENGAGED WITH ANTHROPIC — AND 24 SEVEN IS JUST GETTING STARTED  ·  ';
+
+const CX = 480, CY = 300;
+const PLANET_R = 52;
+const SAT_R = 22;
+const INTERACT_DIST = 60;
+
+/* ── STATE ────────────────────────────────────── */
+const player = { x: CX - 160, y: CY - 120, vx: 0, vy: 0 };
+let shipAngle = 0;
+const exhaust = [];
+const keys = {};
+const visited = [false, false, false, false];
+const beamAlpha = [0, 0, 0, 0];
+let planetGlow = 0;
+let modalOpen = -1;
+let completionShown = false;
+let nearSat = -1;
+let time = 0;
+let introOpacity = 1;
+
+/* ── STARFIELD ────────────────────────────────── */
+const stars = [];
+function initStars() {
+  for (let i = 0; i < 350; i++) {
+    const layer = i < 220 ? 0 : i < 300 ? 1 : 2;
+    stars.push({
+      x: Math.random() * 960, y: Math.random() * 600,
+      r: layer === 0 ? .4 + Math.random() * .4 : layer === 1 ? .8 + Math.random() * .6 : 1.2 + Math.random() * .8,
+      base: layer === 0 ? .15 + Math.random() * .2 : layer === 1 ? .3 + Math.random() * .3 : .5 + Math.random() * .4,
+      twinkle: .01 + Math.random() * .04,
+      phase: Math.random() * Math.PI * 2,
+      layer
+    });
+  }
+}
+
+/* ── NEBULA ───────────────────────────────────── */
+const nebulae = [];
+function initNebulae() {
+  const colors = ['#00E5A0','#FF5300','#00C8FF','#FFD600'];
+  for (let i = 0; i < 12; i++) {
+    nebulae.push({
+      x: Math.random() * 960, y: Math.random() * 600,
+      r: 80 + Math.random() * 160,
+      color: colors[i % 4],
+      alpha: .012 + Math.random() * .018
+    });
+  }
+}
+
+/* ── SHOOTING STARS ───────────────────────────── */
+const shootingStars = [];
+
+/* ── PARTICLES (space dust) ───────────────────── */
+const dust = [];
+function initDust() {
+  for (let i = 0; i < 40; i++) {
+    dust.push({
+      x: Math.random() * 960, y: Math.random() * 600,
+      vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3,
+      r: 1 + Math.random() * 1.5, color: BRANDS[i % 4].color,
+      alpha: .06 + Math.random() * .12
+    });
+  }
+}
+
+/* ── CELEBRATION ──────────────────────────────── */
+const celebParticles = [];
+function spawnCelebration() {
+  for (let i = 0; i < 160; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const spd = 1.5 + Math.random() * 7;
+    celebParticles.push({
+      x: CX, y: CY,
+      vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+      r: 1.5 + Math.random() * 4,
+      color: BRANDS[i % 4].color,
+      life: 1
+    });
+  }
+}
+
+/* ── CANVAS ───────────────────────────────────── */
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+/* ── TICKER INIT ──────────────────────────────── */
+document.querySelector('#ticker-track span').textContent = TICKER_TEXT + TICKER_TEXT;
+
+/* ── COMPLETION CHIPS ─────────────────────────── */
+(function() {
+  const wrap = document.getElementById('comp-chips');
+  BRANDS.forEach(b => {
+    const chip = document.createElement('span');
+    chip.className = 'comp-chip';
+    chip.style.borderColor = b.color;
+    chip.style.color = b.color;
+    chip.textContent = b.emoji + ' ' + b.name;
+    wrap.appendChild(chip);
+  });
+})();
+
+/* ── INPUT ────────────────────────────────────── */
+document.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  if (e.code === 'Space') e.preventDefault();
+  if (e.code === 'Escape') {
+    if (modalOpen >= 0) closeModal();
+    else if (completionShown) closeCompletion();
+  }
+  if (e.code === 'Space' || e.code === 'Enter') {
+    if (modalOpen >= 0) closeModal();
+    else if (nearSat >= 0) openModal(nearSat);
+  }
+});
+document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+/* ── MODAL ────────────────────────────────────── */
+function openModal(idx) {
+  const b = BRANDS[idx];
+  modalOpen = idx;
+  document.getElementById('modal-dot').style.background = b.color;
+  document.getElementById('modal-kicker-text').textContent = b.kicker;
+  document.getElementById('modal-kicker-text').style.color = b.color;
+  document.getElementById('modal-brand-name').textContent = b.name;
+  document.getElementById('modal-brand-name').style.color = b.color;
+  document.getElementById('modal-tagline').textContent = b.tagline;
+  const sig = document.getElementById('modal-signal');
+  sig.style.borderColor = b.color;
+  sig.style.background = hexToRgba(b.color, .06);
+  document.getElementById('modal-signal-label').style.color = b.color;
+  document.getElementById('modal-signal-text').textContent = b.liveSignal;
+  document.getElementById('modal-desc').textContent = b.desc;
+  document.getElementById('modal-cta').style.background = b.color;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function closeModal() {
+  if (modalOpen < 0) return;
+  if (!visited[modalOpen]) {
+    visited[modalOpen] = true;
+    const pip = document.getElementById('pip-' + modalOpen);
+    pip.classList.add('visited');
+    pip.style.background = BRANDS[modalOpen].color;
+    pip.style.boxShadow = '0 0 10px ' + BRANDS[modalOpen].color + ', 0 0 4px ' + BRANDS[modalOpen].color;
+  }
+  modalOpen = -1;
+  document.getElementById('modal-overlay').classList.remove('open');
+  if (visited.every(Boolean) && !completionShown) {
+    setTimeout(() => { spawnCelebration(); setTimeout(showCompletion, 900); }, 400);
+  }
+}
+
+function showCompletion() { completionShown = true; document.getElementById('completion-overlay').classList.add('open'); }
+function closeCompletion() { completionShown = false; document.getElementById('completion-overlay').classList.remove('open'); }
+
+document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+document.getElementById('modal-cta').addEventListener('click', closeModal);
+document.getElementById('comp-close-btn').addEventListener('click', closeCompletion);
+
+/* ── HELPERS ──────────────────────────────────── */
+function hexToRgba(hex, a) {
+  return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
+}
+function dst(x1,y1,x2,y2) { return Math.hypot(x2-x1,y2-y1); }
+
+/* ── UPDATE ───────────────────────────────────── */
+function update() {
+  time++;
+
+  // Satellite orbital positions (always update so beams track)
+  BRANDS.forEach((b, i) => {
+    const o = ORBITS[i];
+    b.x = CX + o.radius * Math.cos(o.angle0 + time * o.speed);
+    b.y = CY + o.radius * Math.sin(o.angle0 + time * o.speed);
+  });
+
+  // Beam fade-in
+  for (let i = 0; i < 4; i++) {
+    if (visited[i] && beamAlpha[i] < 1) beamAlpha[i] = Math.min(1, beamAlpha[i] + .02);
+  }
+
+  // Planet glow
+  const target = visited.filter(Boolean).length;
+  if (planetGlow < target) planetGlow += .015;
+
+  // Intro fade
+  if (introOpacity > 0 && time > 200) {
+    introOpacity = Math.max(0, introOpacity - .012);
+    document.getElementById('intro-hint').style.opacity = introOpacity;
+  }
+
+  // Pause movement when overlay open
+  if (modalOpen >= 0 || (completionShown && document.getElementById('completion-overlay').classList.contains('open'))) return;
+
+  // Player physics
+  const accel = 1.35, fric = .82;
+  if (keys['ArrowLeft']  || keys['KeyA']) player.vx -= accel;
+  if (keys['ArrowRight'] || keys['KeyD']) player.vx += accel;
+  if (keys['ArrowUp']    || keys['KeyW']) player.vy -= accel;
+  if (keys['ArrowDown']  || keys['KeyS']) player.vy += accel;
+  player.vx *= fric; player.vy *= fric;
+  if (Math.abs(player.vx) < .08) player.vx = 0;
+  if (Math.abs(player.vy) < .08) player.vy = 0;
+  player.x += player.vx; player.y += player.vy;
+  player.x = Math.max(14, Math.min(946, player.x));
+  player.y = Math.max(14, Math.min(586, player.y));
+
+  // Ship rotation (smooth)
+  const spd = Math.hypot(player.vx, player.vy);
+  if (spd > .6) {
+    let target = Math.atan2(player.vy, player.vx);
+    let diff = target - shipAngle;
+    while (diff > Math.PI) diff -= Math.PI * 2;
+    while (diff < -Math.PI) diff += Math.PI * 2;
+    shipAngle += diff * .18;
+  }
+
+  // Exhaust
+  if (spd > .8) {
+    for (let n = 0; n < 2; n++) {
+      exhaust.push({
+        x: player.x - Math.cos(shipAngle) * 12 + (Math.random()-.5)*3,
+        y: player.y - Math.sin(shipAngle) * 12 + (Math.random()-.5)*3,
+        vx: -Math.cos(shipAngle) * (.3+Math.random()*.5) + (Math.random()-.5)*.2,
+        vy: -Math.sin(shipAngle) * (.3+Math.random()*.5) + (Math.random()-.5)*.2,
+        life: 1, r: 1.5 + Math.random() * 2.5
+      });
+    }
+  }
+  for (let i = exhaust.length - 1; i >= 0; i--) {
+    const p = exhaust[i];
+    p.x += p.vx; p.y += p.vy; p.life -= .035;
+    if (p.life <= 0) exhaust.splice(i, 1);
+  }
+
+  // Proximity to satellites
+  nearSat = -1;
+  for (let i = 0; i < 4; i++) {
+    if (dst(player.x, player.y, BRANDS[i].x, BRANDS[i].y) < INTERACT_DIST) {
+      nearSat = i; break;
+    }
+  }
+
+  // Space dust
+  dust.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < -5) p.x = 965; if (p.x > 965) p.x = -5;
+    if (p.y < -5) p.y = 605; if (p.y > 605) p.y = -5;
+  });
+
+  // Shooting stars
+  if (Math.random() < .003) {
+    const a = .4 + Math.random() * .8;
+    shootingStars.push({
+      x: Math.random() * 960, y: -5,
+      vx: Math.cos(a) * (7 + Math.random()*5), vy: Math.sin(a) * (7 + Math.random()*5),
+      life: 1, len: 25 + Math.random() * 35
+    });
+  }
+  for (let i = shootingStars.length - 1; i >= 0; i--) {
+    const s = shootingStars[i];
+    s.x += s.vx; s.y += s.vy; s.life -= .02;
+    if (s.life <= 0 || s.x > 970 || s.y > 610) shootingStars.splice(i, 1);
+  }
+
+  // Celebration
+  for (let i = celebParticles.length - 1; i >= 0; i--) {
+    const p = celebParticles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vx *= .98; p.vy *= .98; p.life -= .01;
+    if (p.life <= 0) celebParticles.splice(i, 1);
+  }
+}
+
+/* ── RENDER ───────────────────────────────────── */
+function render() {
+  ctx.clearRect(0, 0, 960, 600);
+  ctx.fillStyle = '#04040a';
+  ctx.fillRect(0, 0, 960, 600);
+
+  drawNebulae();
+  drawStars();
+  drawShootingStars();
+  drawDust();
+  drawOrbitalRings();
+  drawLightBeams();
+  drawPlanet();
+  drawSatellites();
+  drawExhaust();
+  drawShip();
+  drawCelebParticles();
+  updatePrompt();
+}
+
+function drawNebulae() {
+  nebulae.forEach(n => {
+    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
+    g.addColorStop(0, hexToRgba(n.color, n.alpha));
+    g.addColorStop(1, 'transparent');
+    ctx.fillStyle = g;
+    ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
+  });
+}
+
+function drawStars() {
+  stars.forEach(s => {
+    const twinkle = s.base + Math.sin(time * s.twinkle + s.phase) * s.base * .35;
+    ctx.globalAlpha = Math.max(0, twinkle);
+    ctx.fillStyle = s.layer === 2 ? '#e0e8ff' : '#a0a8c0';
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fill();
+    // Cross flare on brightest
+    if (s.layer === 2 && twinkle > .6) {
+      ctx.globalAlpha = (twinkle - .6) * .5;
+      ctx.strokeStyle = '#e0e8ff';
+      ctx.lineWidth = .5;
+      ctx.beginPath(); ctx.moveTo(s.x - 4, s.y); ctx.lineTo(s.x + 4, s.y); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(s.x, s.y - 4); ctx.lineTo(s.x, s.y + 4); ctx.stroke();
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawShootingStars() {
+  shootingStars.forEach(s => {
+    ctx.save();
+    const angle = Math.atan2(s.vy, s.vx);
+    const g = ctx.createLinearGradient(
+      s.x, s.y,
+      s.x - Math.cos(angle) * s.len, s.y - Math.sin(angle) * s.len
+    );
+    g.addColorStop(0, `rgba(255,255,255,${s.life * .8})`);
+    g.addColorStop(1, 'transparent');
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y);
+    ctx.lineTo(s.x - Math.cos(angle) * s.len, s.y - Math.sin(angle) * s.len);
+    ctx.stroke();
+    ctx.restore();
+  });
+}
+
+function drawDust() {
+  dust.forEach(p => {
+    ctx.globalAlpha = p.alpha;
+    ctx.fillStyle = p.color;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawOrbitalRings() {
+  ORBITS.forEach((o, i) => {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(CX, CY, o.radius, 0, Math.PI * 2);
+    ctx.setLineDash([3, 14]);
+    ctx.lineDashOffset = time * (o.speed > 0 ? -.3 : .3);
+    ctx.strokeStyle = hexToRgba(BRANDS[i].color, visited[i] ? .15 : .045);
+    ctx.lineWidth = visited[i] ? 1.2 : .7;
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  });
+}
+
+function drawLightBeams() {
+  BRANDS.forEach((b, i) => {
+    if (beamAlpha[i] <= 0) return;
+    const a = beamAlpha[i];
+    const dx = CX - b.x, dy = CY - b.y;
+    const d = Math.hypot(dx, dy);
+    if (d < 1) return;
+    const nx = dx/d, ny = dy/d;
+    const ex = CX - nx * (PLANET_R + 4), ey = CY - ny * (PLANET_R + 4);
+    const sx = b.x + nx * (SAT_R + 2), sy = b.y + ny * (SAT_R + 2);
+
+    ctx.save();
+    // Wide glow beam
+    const gw = ctx.createLinearGradient(sx, sy, ex, ey);
+    gw.addColorStop(0, hexToRgba(b.color, .25 * a));
+    gw.addColorStop(.5, hexToRgba(b.color, .08 * a));
+    gw.addColorStop(1, hexToRgba(b.color, .35 * a));
+    ctx.strokeStyle = gw;
+    ctx.lineWidth = 8;
+    ctx.shadowColor = b.color;
+    ctx.shadowBlur = 20;
+    ctx.globalAlpha = a * .4;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+
+    // Core beam
+    ctx.globalAlpha = a;
+    const gc = ctx.createLinearGradient(sx, sy, ex, ey);
+    gc.addColorStop(0, hexToRgba(b.color, .7));
+    gc.addColorStop(.5, hexToRgba(b.color, .25));
+    gc.addColorStop(1, hexToRgba(b.color, .8));
+    ctx.strokeStyle = gc;
+    ctx.lineWidth = 2;
+    ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+
+    // Energy flow dashes
+    ctx.setLineDash([3, 10]);
+    ctx.lineDashOffset = -time * 1.5;
+    ctx.strokeStyle = hexToRgba(b.color, .6 * a);
+    ctx.lineWidth = 1.2;
+    ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Impact glow on planet surface
+    ctx.globalAlpha = a * .6;
+    const ig = ctx.createRadialGradient(ex, ey, 0, ex, ey, 18);
+    ig.addColorStop(0, hexToRgba(b.color, .5));
+    ig.addColorStop(1, 'transparent');
+    ctx.fillStyle = ig;
+    ctx.beginPath(); ctx.arc(ex, ey, 18, 0, Math.PI * 2); ctx.fill();
+
+    ctx.restore();
+  });
+}
+
+function drawPlanet() {
+  const vc = visited.filter(Boolean).length;
+  const glow = planetGlow;
+
+  // Outer atmospheric haze
+  ctx.save();
+  const hazeR = PLANET_R + 22 + glow * 8;
+  const haze = ctx.createRadialGradient(CX, CY, PLANET_R, CX, CY, hazeR);
+  haze.addColorStop(0, `rgba(80,120,255,${.04 + glow * .025})`);
+  haze.addColorStop(1, 'transparent');
+  ctx.fillStyle = haze;
+  ctx.beginPath(); ctx.arc(CX, CY, hazeR, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  // Full illumination superglow
+  if (glow > 3.5) {
+    const sg = (glow - 3.5) * 2;
+    ctx.save();
+    const sup = ctx.createRadialGradient(CX, CY, PLANET_R * .3, CX, CY, PLANET_R * 3.5);
+    sup.addColorStop(0, `rgba(255,220,160,${.08 * sg})`);
+    sup.addColorStop(.4, `rgba(255,180,100,${.03 * sg})`);
+    sup.addColorStop(1, 'transparent');
+    ctx.fillStyle = sup;
+    ctx.beginPath(); ctx.arc(CX, CY, PLANET_R * 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Planet body
+  ctx.save();
+  const body = ctx.createRadialGradient(CX - 12, CY - 14, 4, CX, CY, PLANET_R);
+  body.addColorStop(0, glow > 3 ? '#2a2850' : '#151525');
+  body.addColorStop(1, glow > 3 ? '#14122a' : '#08081a');
+  ctx.fillStyle = body;
+  ctx.beginPath(); ctx.arc(CX, CY, PLANET_R, 0, Math.PI * 2); ctx.fill();
+
+  // Illuminated sectors
+  for (let i = 0; i < 4; i++) {
+    if (!visited[i]) continue;
+    const sa = -Math.PI/2 + i * Math.PI/2 + .04;
+    const ea = sa + Math.PI/2 - .08;
+    ctx.save();
+    ctx.beginPath(); ctx.moveTo(CX, CY);
+    ctx.arc(CX, CY, PLANET_R - 1, sa, ea); ctx.closePath();
+    ctx.fillStyle = hexToRgba(BRANDS[i].color, .1 + beamAlpha[i] * .06);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  // Subtle surface pattern (rings)
+  ctx.strokeStyle = `rgba(255,255,255,${.02 + glow * .008})`;
+  ctx.lineWidth = .5;
+  for (let r = 15; r < PLANET_R; r += 14) {
+    ctx.beginPath(); ctx.arc(CX, CY, r, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  // Rim light
+  ctx.strokeStyle = `rgba(150,180,255,${.12 + glow * .06})`;
+  ctx.lineWidth = 1.5;
+  if (glow > 2) { ctx.shadowColor = 'rgba(150,180,255,.3)'; ctx.shadowBlur = 12; }
+  ctx.beginPath(); ctx.arc(CX, CY, PLANET_R, 0, Math.PI * 2); ctx.stroke();
+  ctx.shadowBlur = 0;
+  ctx.restore();
+
+  // Energy ring (4 segments)
+  const ringR = PLANET_R + 9;
+  for (let i = 0; i < 4; i++) {
+    const sa = -Math.PI/2 + i * Math.PI/2 + .08;
+    const ea = sa + Math.PI/2 - .16;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(CX, CY, ringR, sa, ea);
+    if (visited[i]) {
+      ctx.strokeStyle = BRANDS[i].color;
+      ctx.lineWidth = 2.5;
+      ctx.shadowColor = BRANDS[i].color;
+      ctx.shadowBlur = 14;
+    } else {
+      ctx.strokeStyle = hexToRgba(BRANDS[i].color, .1);
+      ctx.lineWidth = 1;
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Text
+  ctx.save();
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.font = "22px 'Bebas Neue', sans-serif";
+  ctx.fillStyle = `rgba(255,255,255,${.2 + glow * .1})`;
+  if (glow > 2) { ctx.shadowColor = 'rgba(255,255,255,.15)'; ctx.shadowBlur = 16; }
+  ctx.fillText('24 SEVEN', CX, CY - 7);
+  ctx.shadowBlur = 0;
+  ctx.font = "500 8px 'DM Mono', monospace";
+  ctx.fillStyle = `rgba(255,255,255,${.12 + glow * .06})`;
+  ctx.fillText('x ANTHROPIC', CX, CY + 10);
+  ctx.restore();
+}
+
+function drawSatellites() {
+  BRANDS.forEach((b, i) => {
+    const d = dst(player.x, player.y, b.x, b.y);
+    const isNear = d < INTERACT_DIST * 2.2;
+    const isVis = visited[i];
+    const rot = time * .008 + i * 1.5;
+
+    ctx.save();
+    // Proximity pulse ring
+    if (isNear && !isVis) {
+      const pulse = .2 + .2 * Math.sin(time * .08);
+      ctx.beginPath(); ctx.arc(b.x, b.y, SAT_R + 10 + Math.sin(time*.04)*4, 0, Math.PI*2);
+      ctx.strokeStyle = hexToRgba(b.color, pulse);
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Satellite body — hexagon
+    ctx.beginPath();
+    for (let j = 0; j < 6; j++) {
+      const a = rot + j * Math.PI / 3;
+      const px = b.x + SAT_R * Math.cos(a), py = b.y + SAT_R * Math.sin(a);
+      j === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = hexToRgba(b.color, isVis ? .12 : .04);
+    ctx.fill();
+    ctx.strokeStyle = hexToRgba(b.color, isVis ? .8 : isNear ? .35 : .13);
+    ctx.lineWidth = isVis ? 1.8 : 1;
+    if (isVis) { ctx.shadowColor = b.color; ctx.shadowBlur = 22; }
+    else if (isNear) { ctx.shadowColor = b.color; ctx.shadowBlur = 8; }
+    ctx.stroke();
+
+    // Solar panel wings
+    const wa = rot + Math.PI/6;
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = hexToRgba(b.color, isVis ? .35 : .12);
+    ctx.shadowBlur = 0;
+    for (let s = 0; s < 2; s++) {
+      const ang = wa + s * Math.PI;
+      ctx.beginPath();
+      ctx.moveTo(b.x + Math.cos(ang)*SAT_R*.8, b.y + Math.sin(ang)*SAT_R*.8);
+      ctx.lineTo(b.x + Math.cos(ang)*(SAT_R+14), b.y + Math.sin(ang)*(SAT_R+14));
+      ctx.stroke();
+      // Panel rectangle at end
+      const ex = b.x + Math.cos(ang)*(SAT_R+14), ey = b.y + Math.sin(ang)*(SAT_R+14);
+      const perp = ang + Math.PI/2;
+      ctx.fillStyle = hexToRgba(b.color, isVis ? .15 : .05);
+      ctx.beginPath();
+      ctx.moveTo(ex + Math.cos(perp)*5 + Math.cos(ang)*4, ey + Math.sin(perp)*5 + Math.sin(ang)*4);
+      ctx.lineTo(ex - Math.cos(perp)*5 + Math.cos(ang)*4, ey - Math.sin(perp)*5 + Math.sin(ang)*4);
+      ctx.lineTo(ex - Math.cos(perp)*5 - Math.cos(ang)*4, ey - Math.sin(perp)*5 - Math.sin(ang)*4);
+      ctx.lineTo(ex + Math.cos(perp)*5 - Math.cos(ang)*4, ey + Math.sin(perp)*5 - Math.sin(ang)*4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = hexToRgba(b.color, isVis ? .3 : .08);
+      ctx.lineWidth = .8;
+      ctx.stroke();
+    }
+    ctx.restore();
+
+    // Emoji
+    ctx.save();
+    ctx.font = '15px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(b.emoji, b.x, b.y + 1);
+    ctx.restore();
+
+    // Label
+    ctx.save();
+    ctx.font = "500 8px 'DM Mono', monospace";
+    ctx.textAlign = 'center';
+    ctx.fillStyle = hexToRgba(b.color, isNear ? .85 : .4);
+    ctx.fillText(b.name, b.x, b.y + SAT_R + 18);
+    ctx.restore();
+  });
+}
+
+function drawExhaust() {
+  exhaust.forEach(p => {
+    const t = p.life;
+    ctx.globalAlpha = t * .7;
+    // Color fades from orange-white to orange to transparent
+    const r = 255, g = Math.floor(120 + 135 * t), bl = Math.floor(50 * t);
+    ctx.fillStyle = `rgb(${r},${g},${bl})`;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r * t, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+}
+
+function drawShip() {
+  const spd = Math.hypot(player.vx, player.vy);
+  ctx.save();
+  ctx.translate(player.x, player.y);
+  ctx.rotate(shipAngle);
+
+  // Engine glow (behind ship)
+  if (spd > .5) {
+    ctx.save();
+    const eg = ctx.createRadialGradient(-8, 0, 0, -8, 0, 14);
+    eg.addColorStop(0, `rgba(255,140,40,${Math.min(.4, spd*.06)})`);
+    eg.addColorStop(1, 'transparent');
+    ctx.fillStyle = eg;
+    ctx.beginPath(); ctx.arc(-8, 0, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+
+  // Ship body
+  ctx.shadowColor = 'rgba(255,255,255,.4)';
+  ctx.shadowBlur = 12;
+  ctx.fillStyle = '#e8eaf0';
+  ctx.beginPath();
+  ctx.moveTo(15, 0);
+  ctx.lineTo(-7, -8);
+  ctx.lineTo(-4, -2);
+  ctx.lineTo(-7, 0);
+  ctx.lineTo(-4, 2);
+  ctx.lineTo(-7, 8);
+  ctx.closePath();
+  ctx.fill();
+
+  // Windshield
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = '#88ccff';
+  ctx.beginPath();
+  ctx.moveTo(10, 0);
+  ctx.lineTo(3, -3);
+  ctx.lineTo(3, 3);
+  ctx.closePath();
+  ctx.fill();
+
+  // Engine nozzle
+  ctx.fillStyle = '#FF5300';
+  ctx.fillRect(-8, -2.5, 4, 5);
+
+  ctx.restore();
+}
+
+function drawCelebParticles() {
+  celebParticles.forEach(p => {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.shadowColor = p.color;
+    ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+  });
+  ctx.globalAlpha = 1;
+}
+
+function updatePrompt() {
+  const el = document.getElementById('interact-prompt');
+  if (nearSat >= 0 && modalOpen < 0) {
+    const b = BRANDS[nearSat];
+    el.style.opacity = .6 + Math.sin(time * .08) * .3;
+    el.style.left = b.x + 'px';
+    el.style.top = (b.y - SAT_R - 26) + 'px';
+    el.style.transform = 'translateX(-50%)';
+    el.style.color = visited[nearSat] ? b.color : '#fff';
+    el.textContent = visited[nearSat] ? 'SPACE TO REVISIT' : 'SPACE TO DOCK';
+  } else {
+    el.style.opacity = 0;
+  }
+}
+
+/* ── GAME LOOP ────────────────────────────────── */
+function gameLoop() {
+  update();
+  render();
+  requestAnimationFrame(gameLoop);
+}
+
+/* ── INIT ─────────────────────────────────────── */
+document.fonts.ready.then(() => {
+  initStars();
+  initNebulae();
+  initDust();
+  requestAnimationFrame(gameLoop);
+});
+</script>
+</body>
+</html>
