@@ -15,10 +15,8 @@ body{background:#191919;display:flex;flex-direction:column;font-family:'Inter',s
 #nav-logo{font-family:'Inter',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#FAFAF7;text-shadow:0 0 24px rgba(250,250,247,.1);white-space:nowrap;display:flex;align-items:center;gap:6px}
 #nav-logo span{color:#CC785C}
 .nav-anthro-logo{height:14px;filter:brightness(0) invert(1);opacity:.95}
-#nav-headline{flex:1;text-align:center;font-family:'Source Serif 4',serif;font-size:20px;font-weight:400;line-height:1.4;color:rgba(250,250,247,.55);letter-spacing:.2px;font-style:italic;padding:0 24px}
-#nav-pips{display:flex;gap:12px;align-items:center;flex-shrink:0}
-.pip{width:16px;height:16px;border-radius:50%;border:2px solid #40403E;background:transparent;transition:all .6s cubic-bezier(.4,0,.2,1)}
-.pip.visited{border-color:transparent;transform:scale(1.2)}
+#nav-headline{flex:1;text-align:center;font-family:'Source Serif 4',serif;font-size:20px;font-weight:400;line-height:1.4;color:rgba(250,250,247,.55);letter-spacing:.2px;padding:0 24px}
+#nav-score{flex-shrink:0;font-family:'DM Mono',monospace;font-size:14px;color:rgba(250,250,247,.45);letter-spacing:1px}
 #game-wrapper{position:relative;flex:1;min-height:0;user-select:none;overflow:hidden}
 canvas{display:block;width:100%;height:100%;cursor:none}
 /* Contact strip */
@@ -93,11 +91,7 @@ canvas{display:block;width:100%;height:100%;cursor:none}
 <nav id="nav-bar">
   <div id="nav-logo">24 SEVEN <span>x</span> <img src="logos/anthropic.svg" alt="Anthropic" class="nav-anthro-logo"></div>
   <div id="nav-headline">Anthropic marketing can make more impact in the journey ahead by activating these 4 agencies from the world of 24 Seven. Activate each satellite to learn more.</div>
-  <div id="nav-pips">
-    <div class="pip" id="pip-0" title="The Sage Group"></div>
-    <div class="pip" id="pip-1" title="SketchDeck"></div>
-    <div class="pip" id="pip-2" title="Markacy"></div>
-    <div class="pip" id="pip-3" title="Futureman"></div>
+  <div id="nav-score"><span id="score-count">0</span> out of 4
   </div>
 </nav>
 <div id="game-wrapper">
@@ -477,10 +471,7 @@ function closeModal() {
   if (modalOpen < 0) return;
   if (!visited[modalOpen]) {
     visited[modalOpen] = true;
-    const pip = document.getElementById('pip-' + modalOpen);
-    pip.classList.add('visited');
-    pip.style.background = BRANDS[modalOpen].color;
-    pip.style.boxShadow = '0 0 12px ' + BRANDS[modalOpen].color + ', 0 0 5px ' + BRANDS[modalOpen].color;
+    document.getElementById('score-count').textContent = visited.filter(Boolean).length;
   }
   modalOpen = -1;
   document.getElementById('modal-overlay').classList.remove('open');
