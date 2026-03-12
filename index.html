@@ -338,8 +338,9 @@ function initStars() {
     '#EBDBBC','#D4A27F',             // warm
     '#dbc8a0','#c9b896'              // golden
   ];
+  const starMult = (W < 768) ? 0.5 : 1;
   LAYERS.forEach((L, li) => {
-    for (let i = 0; i < L.count; i++) {
+    for (let i = 0; i < Math.round(L.count * starMult); i++) {
       stars.push({
         x: Math.random() * W, y: Math.random() * H,
         r: L.rMin + Math.random() * (L.rMax - L.rMin),
