@@ -20,7 +20,7 @@ body{background:#191919;display:flex;flex-direction:column;font-family:'Inter',s
 #game-wrapper{position:relative;flex:1;min-height:0;user-select:none;overflow:hidden}
 canvas{display:block;width:100%;height:100%;cursor:none}
 /* Contact strip */
-#contact-strip{flex-shrink:0;background:rgba(250,250,247,.03);border-top:1px solid rgba(250,250,247,.06);padding:10px 28px;display:flex;justify-content:center;align-items:center;gap:28px;font-family:'DM Mono',monospace;font-size:12px;color:rgba(250,250,247,.45)}
+#contact-strip{flex-shrink:0;background:rgba(250,250,247,.03);border-top:1px solid rgba(250,250,247,.06);padding:14px 28px;display:flex;justify-content:center;align-items:center;gap:28px;font-family:'DM Mono',monospace;font-size:15px;color:rgba(250,250,247,.45)}
 #contact-strip a{color:#CC785C;text-decoration:none;font-weight:500;transition:color .2s}
 #contact-strip a:hover{color:#d9927a}
 #contact-strip .sep{color:rgba(250,250,247,.12)}
@@ -67,9 +67,9 @@ canvas{display:block;width:100%;height:100%;cursor:none}
 .comp-sub{font-size:16px;line-height:1.75;color:#666663;margin-bottom:36px;font-family:'Source Serif 4',serif}
 .comp-chips{display:flex;justify-content:center;gap:10px;margin-bottom:36px;flex-wrap:wrap}
 .comp-chip{padding:7px 16px;border-radius:22px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;border:1.5px solid;background:#FAFAF7}
-.comp-cta{display:inline-block;padding:18px 52px;border-radius:10px;background:#CC785C;color:#FAFAF7;font-family:'Inter',sans-serif;font-size:18px;font-weight:700;text-decoration:none;letter-spacing:.5px;transition:filter .2s;margin-bottom:30px}
+.comp-cta{display:inline-block;padding:22px 60px;border-radius:10px;background:#CC785C;color:#FAFAF7;font-family:'Inter',sans-serif;font-size:22px;font-weight:700;text-decoration:none;letter-spacing:.5px;transition:filter .2s;margin-bottom:30px}
 .comp-cta:hover{filter:brightness(1.1)}
-.comp-contacts{font-family:'DM Mono',monospace;font-size:12px;color:#91918D;line-height:1.9}
+.comp-contacts{font-family:'DM Mono',monospace;font-size:15px;color:#91918D;line-height:1.9}
 .comp-contacts a{color:#666663;text-decoration:none}
 .comp-contacts a:hover{color:#191919}
 .comp-close{position:absolute;top:22px;right:26px;background:none;border:none;color:#91918D;font-size:20px;cursor:pointer;font-family:'DM Mono',monospace;z-index:61}
@@ -90,7 +90,7 @@ canvas{display:block;width:100%;height:100%;cursor:none}
 <body>
 <nav id="nav-bar">
   <div id="nav-logo">24 SEVEN <span>x</span> <img src="logos/anthropic.svg" alt="Anthropic" class="nav-anthro-logo"></div>
-  <div id="nav-headline">Anthropic marketing can make more impact in the journey ahead by activating these 4 agencies from the world of 24 Seven. Activate each satellite to learn more.</div>
+  <div id="nav-headline">Anthropic marketing team: You already work with one of us. Here&rsquo;s what activating our full network can do for you.</div>
   <div id="nav-score"><span id="score-count">0</span> out of 4
   </div>
 </nav>
@@ -104,7 +104,7 @@ canvas{display:block;width:100%;height:100%;cursor:none}
   <span class="sep">|</span>
   <span>Elliot Miller &middot; elliot.miller@sketchdeck.com &middot; Creative Partnerships</span>
   <span class="sep">|</span>
-  <a href="https://calendly.com/24sevengroup" target="_blank">Schedule a Meeting &rarr;</a>
+  <a href="https://hello.sketchdeck.com/meetings/elliot-miller-sd/30-minute-meeting?uuid=aeb1d169-b2cb-4d24-bc22-128e143e8299" target="_blank">Schedule a Meeting &rarr;</a>
 </div>
 <div id="ticker">
   <div id="ticker-live"><span class="live-dot"></span>LIVE</div>
@@ -147,10 +147,10 @@ canvas{display:block;width:100%;height:100%;cursor:none}
   <button class="comp-close" id="comp-close-btn">&times;</button>
   <div id="completion-card">
     <div class="comp-eyebrow">Mission Complete &middot; 4/4 Satellites Online</div>
-    <div class="comp-headline">You know the universe.</div>
-    <div class="comp-sub">Anthropic is in the most exciting moment in AI history. 24 Seven is the creative universe that shows up when it counts. Let&rsquo;s build something together.</div>
+    <div class="comp-headline">You know the network.</div>
+    <div class="comp-sub">Anthropic is in the most important moment in AI history. 24 Seven is the creative network already inside it. The next move is yours.</div>
     <div class="comp-chips" id="comp-chips"></div>
-    <a class="comp-cta" href="https://calendly.com/24sevengroup" target="_blank">Schedule a Meeting &rarr;</a>
+    <a class="comp-cta" href="https://hello.sketchdeck.com/meetings/elliot-miller-sd/30-minute-meeting?uuid=aeb1d169-b2cb-4d24-bc22-128e143e8299" target="_blank">Schedule a Meeting &rarr;</a>
     <div class="comp-contacts">
       Nicole Greene &middot; <a href="mailto:ngreene@thesagegroup.co">ngreene@thesagegroup.co</a> &middot; VP Client Services<br>
       Elliot Miller &middot; <a href="mailto:elliot.miller@sketchdeck.com">elliot.miller@sketchdeck.com</a> &middot; Creative Partnerships
@@ -182,34 +182,34 @@ const PAL = {
 const BRANDS = [
   {
     id:'sage', name:'THE SAGE GROUP', emoji:'🌿', color:'#00E5A0',
-    kicker:'Marketing Talent · The Growth Engine',
-    tagline:'EXCEPTIONAL TALENT THAT DRIVES RESULTS',
-    liveSignal:'Anthropic is targeting $26B in 2026 revenue. The marketing team is expanding globally. The Sage Group is already in the building.',
-    desc:'The Sage Group provides exceptional marketing and business operations consultants, contractors, and permanent talent that drive results for leading companies across industries. As Anthropic scales from 1,000 to 300,000+ enterprise customers — through a Super Bowl campaign, an F1 partnership, and the most turbulent news cycle in AI history — the marketing org needs to staff up fast and smart. Sage provides the consultants, contractors, and embedded talent to make that possible without slowing down.',
+    kicker:'Marketing Talent · The Existing Partner',
+    tagline:'THE MARKETING TALENT PARTNER ALREADY INSIDE ANTHROPIC',
+    liveSignal:'Anthropic\u2019s marketing org is expanding globally across SF, NY, London, and beyond. Open roles span product marketing, GTM narrative, field marketing, events, and presentation design. Sage is already in the building.',
+    desc:'The Sage Group has been placing senior marketing talent at leading tech companies for over two decades, and is already an active partner to Anthropic. As Anthropic scales from startup velocity to global enterprise, the marketing team needs to staff up fast and smart: contractors, embedded teams, and permanent talent who can operate at the speed this moment demands. Sage provides exactly that, without the ramp-up risk of starting a new vendor relationship. The trust is already there. The question is how much further it goes.',
     x:0, y:0
   },
   {
     id:'sketchdeck', name:'SKETCHDECK', emoji:'🎨', color:'#FF5300',
     kicker:'Creative Production · The Execution Engine',
-    tagline:'ALL THE DESIGN SERVICES YOU NEED IN ONE PLACE',
-    liveSignal:'The Super Bowl campaign needs to extend: F1 assets across 24 races in 20 countries, OOH refreshes in SF/NYC/LA/DC, streaming pre-rolls, social cuts. The brief doesn\'t stop.',
-    desc:'SketchDeck is the production engine behind creative execution at scale. Anthropic\'s "A Time and a Place" Super Bowl LX campaign ran to 120M viewers across two spots. The Williams FW48 livery just debuted in Melbourne. "Keep Thinking" OOH is live in 12 cities. Every one of those moments requires a relentless volume of on-brand assets — across formats, channels, and markets — without breaking quality or speed. That\'s SketchDeck\'s exact model.',
+    tagline:'ALL THE DESIGN SERVICES YOU NEED, AT THE SPEED YOU\'RE MOVING',
+    liveSignal:'\u201CKeep Thinking\u201D is live across 12 cities. The Williams FW48 livery just debuted in Melbourne. The brief doesn\'t stop. Neither do we.',
+    desc:'Anthropic\'s creative output is accelerating fast. OOH in 12 cities, F1 partnership assets across 20 races, streaming pre-rolls, social cuts, partner decks, event collateral. Every campaign moment generates a wave of derivative assets across formats, channels, and markets. That\'s where SketchDeck operates: on-brand, high-volume creative production that scales with your roadmap, not against it. Mother handles the big idea. We handle everything that comes after it.',
     x:0, y:0
   },
   {
     id:'markacy', name:'MARKACY', emoji:'📡', color:'#00C8FF',
     kicker:'Performance Marketing · The Growth Optimizer',
-    tagline:'OPTIMIZE GROWTH INVESTMENTS FOR SUSTAINED PERFORMANCE',
-    liveSignal:'Search intent for Claude is spiking. OpenAI is spending aggressively. The window is open and competitive. Markacy turns heat into pipeline.',
-    desc:'Anthropic has had two back-to-back earned media explosions — the Super Bowl "A Time and a Place" campaign and the Pentagon standoff that drove 1M+ daily sign-ups and made Claude #1 in the App Store in 20+ countries above ChatGPT and Gemini. That\'s extraordinary consumer intent. Markacy\'s finance-first, measurement-driven approach is exactly what\'s needed to capture that window — connecting paid media and performance strategy directly to revenue outcomes before the cycle moves on.',
+    tagline:'CONNECT EVERY MARKETING DOLLAR DIRECTLY TO REVENUE',
+    liveSignal:'Claude hit #1 in the App Store across 20+ countries. Search intent is spiking. OpenAI is spending aggressively. The window is open and competitive. Markacy turns that heat into pipeline.',
+    desc:'Claude is generating extraordinary consumer intent right now: 1M+ daily sign-ups, #1 in the App Store in 20+ countries above ChatGPT and Gemini. That kind of organic momentum is rare, and it won\u2019t last forever. Markacy is a finance-first performance marketing firm built to capture exactly this kind of window: connecting paid media, measurement, and growth strategy directly to P&L outcomes. Not ROAS. Not vanity metrics. Revenue. As Anthropic shifts from earned media to paid growth, Markacy ensures every dollar spent builds on the momentum rather than diluting it.',
     x:0, y:0
   },
   {
     id:'futureman', name:'FUTUREMAN', emoji:'⚡', color:'#FFD600',
     kicker:'Experiential & Creative · The Experience Builder',
-    tagline:'HIGH-IMPACT ACTIVATIONS THAT MAKE BRANDS REAL',
-    liveSignal:'F1 season is live. Claude Labs is shipping. The experiential opportunities haven\'t been designed yet — Futureman designs them.',
-    desc:'Anthropic\'s NYC pop-up in October 2025 drew 5,000 people and 10M+ social impressions. Claude Labs launched in January 2026, led by Instagram co-founder Mike Krieger, shipping experimental AI products. Williams F1 opens a global fanbase of 500M+ across 24 races in 20 countries. The brand is culturally primed — "Keep Thinking" is a platform, not just a tagline. Futureman builds the activations and experiences that make that real in the world.',
+    tagline:'WHERE CLAUDE MEETS THE PHYSICAL WORLD',
+    liveSignal:'F1 season is live across 20 races in 20 countries. Claude Labs is shipping experimental products. The experiential opportunities haven\u2019t been designed yet. Futureman designs them.',
+    desc:'Anthropic has a brand platform with real cultural momentum: a Williams F1 partnership reaching 500M+ fans globally, \u201CKeep Thinking\u201D running across 12 cities, and Claude Labs incubating the next wave of products. A tagline becomes a movement when it lives in the world, not just on screens. Futureman builds the activations, immersive experiences, and original content that close that gap. From race weekend brand moments to product launch experiences that people actually remember, Futureman is how Anthropic shows up beyond the ad buy.',
     x:0, y:0
   }
 ];
