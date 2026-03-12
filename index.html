@@ -277,9 +277,9 @@ const TICKER_TEXT = '● CLAUDE NAMED #1 AI ASSISTANT BY DAILY ACTIVE USERS — 
 
 let W = 1280, H = 800;
 let CX = W/2, CY = H/2;
-const PLANET_R = 130;
-const SAT_R = 38;
-const INTERACT_DIST = 86;
+let PLANET_R = 130;
+let SAT_R = 38;
+let INTERACT_DIST = 86;
 
 /* ── STATE ────────────────────────────────────── */
 const player = { x: CX - 200, y: CY - 150, vx: 0, vy: 0 };
@@ -433,8 +433,11 @@ function resizeCanvas() {
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  // Re-scale orbit radii relative to smallest dimension
+  // Re-scale everything relative to smallest dimension
   const scale = Math.min(W, H) / 800;
+  PLANET_R = Math.round(130 * scale);
+  SAT_R = Math.round(38 * scale);
+  INTERACT_DIST = Math.round(86 * scale);
   ORBITS[0].radius = 270 * scale;
   ORBITS[1].radius = 300 * scale;
   ORBITS[2].radius = 285 * scale;
@@ -942,28 +945,29 @@ function drawPlanet() {
   const cAlpha = .8 + glow * .06;
   const logo24 = logoImages['24seven'];
   const logoAn = logoImages['anthropic'];
-  // Measure content block: 24Seven(44) + gap(10) + ×(14) + gap(10) + Anthropic(20) = 98
-  const blockH = 98;
+  const ls = PLANET_R / 130; // logo scale factor
+  const h24base = 44 * ls, gapBase = 10 * ls, xH = 14 * ls, hAnBase = 20 * ls;
+  const blockH = h24base + gapBase + xH + gapBase + hAnBase;
   const blockTop = CY - blockH / 2;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   if (logo24) {
-    const h24 = 44;
+    const h24 = h24base;
     const w24 = h24 * (logo24.naturalWidth / logo24.naturalHeight);
     ctx.globalAlpha = cAlpha;
-    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.manilla, .4); ctx.shadowBlur = 28; }
+    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.manilla, .4); ctx.shadowBlur = 28 * ls; }
     ctx.drawImage(logo24, CX - w24/2, blockTop, w24, h24);
     ctx.shadowBlur = 0;
   }
-  ctx.font = "500 14px 'DM Mono', monospace";
+  ctx.font = `500 ${Math.round(14 * ls)}px 'DM Mono', monospace`;
   ctx.fillStyle = hexToRgba(PAL.ivoryLt, cAlpha * .65);
   ctx.globalAlpha = cAlpha * .65;
-  ctx.fillText('×', CX, blockTop + 44 + 10 + 7);
+  ctx.fillText('×', CX, blockTop + h24base + gapBase + xH / 2);
   if (logoAn) {
-    const hAn = 20;
+    const hAn = hAnBase;
     const wAn = hAn * (logoAn.naturalWidth / logoAn.naturalHeight);
     ctx.globalAlpha = cAlpha;
-    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.ivoryLt, .35); ctx.shadowBlur = 22; }
-    ctx.drawImage(logoAn, CX - wAn/2, blockTop + 44 + 10 + 14 + 10, wAn, hAn);
+    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.ivoryLt, .35); ctx.shadowBlur = 22 * ls; }
+    ctx.drawImage(logoAn, CX - wAn/2, blockTop + h24base + gapBase + xH + gapBase, wAn, hAn);
     ctx.shadowBlur = 0;
   }
   ctx.restore();
@@ -1023,7 +1027,8 @@ function drawSatellites() {
 
     // Emoji
     ctx.save();
-    ctx.font = '20px sans-serif';
+    const emojiSize = Math.round(20 * (SAT_R / 38));
+    ctx.font = emojiSize + 'px sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(b.emoji, b.x, b.y + 1);
     ctx.restore();
@@ -1031,15 +1036,16 @@ function drawSatellites() {
     // Logo label (per-brand height for equal visual width ~120-135px)
     const logo = logoImages[b.id];
     if (logo) {
+      const satScale = SAT_R / 38;
       const brandH = { sage: 30, sketchdeck: 70, markacy: 40, futureman: 22 };
-      const logoH = brandH[b.id] || 30;
+      const logoH = (brandH[b.id] || 30) * satScale;
       const ar = logo.naturalWidth / logo.naturalHeight;
-      const logoW = Math.min(180, logoH * ar);
+      const logoW = Math.min(180 * satScale, logoH * ar);
       const actualH = logoW / ar;
       ctx.save();
       ctx.filter = 'brightness(0) invert(1)';
       ctx.globalAlpha = isNear ? .95 : .6;
-      ctx.drawImage(logo, b.x - logoW/2, b.y + SAT_R + 18, logoW, actualH);
+      ctx.drawImage(logo, b.x - logoW/2, b.y + SAT_R + 12 * satScale, logoW, actualH);
       ctx.filter = 'none';
       ctx.restore();
     } else {
@@ -1283,6 +1289,8 @@ function gameLoop() { update(); render(); requestAnimationFrame(gameLoop); }
 document.fonts.ready.then(async () => {
   await loadLogos();
   resizeCanvas();
+  player.x = CX - 200 * (PLANET_R / 130);
+  player.y = CY - 150 * (PLANET_R / 130);
   initStars(); initNebulae(); initDust(); initConstellations();
   // Welcome overlay
   const welcomeOverlay = document.getElementById('welcome-overlay');
