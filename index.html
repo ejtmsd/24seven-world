@@ -6,148 +6,151 @@
 <title>24 Seven x Anthropic</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow:hidden}
-body{background:#191919;display:flex;flex-direction:column;font-family:'Inter',sans-serif;color:#FAFAF7}
-#nav-bar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:12px 28px;background:#141413;border-bottom:1px solid rgba(250,250,247,.06);z-index:20}
-#nav-logo{font-family:'Inter',sans-serif;font-weight:800;font-size:20px;letter-spacing:2px;color:#FAFAF7;text-shadow:0 0 24px rgba(250,250,247,.1);white-space:nowrap;display:flex;align-items:center;gap:6px}
-#nav-logo span{color:#CC785C}
+body{background:#000;display:flex;flex-direction:column;font-family:'Press Start 2P',monospace;color:#FFF}
+#nav-bar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:16px 28px;background:#000;border-bottom:2px solid #222;z-index:20}
+#nav-logo{font-family:'Press Start 2P',monospace;font-weight:400;font-size:16px;letter-spacing:1px;color:#FF0040;text-shadow:0 0 10px rgba(255,0,64,.5);white-space:nowrap;display:flex;align-items:center;gap:8px}
+#nav-logo span{color:#FFD700}
 .nav-anthro-logo{height:14px;filter:brightness(0) invert(1);opacity:.95}
-#nav-headline{flex:1;text-align:center;font-family:'Source Serif 4',serif;font-size:20px;font-weight:400;line-height:1.4;color:rgba(250,250,247,.55);letter-spacing:.2px;padding:0 24px}
-#nav-score{flex-shrink:0;font-family:'DM Mono',monospace;font-size:14px;color:rgba(250,250,247,.45);letter-spacing:1px}
+#nav-headline{flex:1;text-align:center;font-family:'Press Start 2P',monospace;font-size:9px;font-weight:400;line-height:1.6;color:#888899;letter-spacing:.5px;padding:0 20px}
+#nav-score{flex-shrink:0;font-family:'Press Start 2P',monospace;font-size:14px;color:#FFD700;letter-spacing:1px;text-shadow:0 0 8px rgba(255,215,0,.4)}
 #game-wrapper{position:relative;flex:1;min-height:0;user-select:none;overflow:hidden}
 canvas{display:block;width:100%;height:100%;cursor:none}
+/* CRT scanline overlay */
+#game-wrapper::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:10}
+#game-wrapper::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;box-shadow:inset 0 0 80px rgba(0,0,0,.5);border-radius:8px;pointer-events:none;z-index:10}
 /* Contact strip */
-#contact-strip{flex-shrink:0;background:rgba(250,250,247,.03);border-top:1px solid rgba(250,250,247,.06);padding:14px 28px;display:flex;justify-content:center;align-items:center;gap:28px;font-family:'DM Mono',monospace;font-size:15px;color:rgba(250,250,247,.45)}
-#contact-strip a{color:#CC785C;text-decoration:none;font-weight:500;transition:color .2s}
-#contact-strip a:hover{color:#d9927a}
-#contact-strip .sep{color:rgba(250,250,247,.12)}
+#contact-strip{flex-shrink:0;background:#000;border-top:2px solid #222;padding:14px 28px;display:flex;justify-content:center;align-items:center;gap:32px;font-family:'Press Start 2P',monospace;font-size:9px;color:#888899;line-height:1.8}
+#contact-strip a{color:#00FFFF;text-decoration:none;font-weight:400;transition:color .2s;text-shadow:0 0 6px rgba(0,255,255,.3)}
+#contact-strip a:hover{color:#FFF}
+#contact-strip .sep{color:#333}
 /* Ticker */
-#ticker{flex-shrink:0;background:#191919;height:42px;display:flex;align-items:center;overflow:hidden;border-top:1px solid rgba(250,250,247,.04);position:relative}
-#ticker-live{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:0 16px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;letter-spacing:1.2px;color:#BF4D43;z-index:2;background:#191919}
-#ticker-live::after{content:'';position:absolute;right:0;top:0;bottom:0;width:36px;background:linear-gradient(90deg,transparent,#191919);z-index:1}
-.live-dot{width:8px;height:8px;border-radius:50%;background:#BF4D43;animation:livePulse 1.5s infinite}
+#ticker{flex-shrink:0;background:#000;height:44px;display:flex;align-items:center;overflow:hidden;border-top:2px solid #222;position:relative}
+#ticker-live{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 18px;font-family:'Press Start 2P',monospace;font-size:9px;font-weight:400;letter-spacing:1px;color:#FF0040;z-index:2;background:#000;text-shadow:0 0 8px rgba(255,0,64,.5)}
+#ticker-live::after{content:'';position:absolute;right:0;top:0;bottom:0;width:36px;background:linear-gradient(90deg,transparent,#000);z-index:1}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#FF0040;animation:livePulse 1.5s infinite}
 @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.3}}
 #ticker-track-wrap{flex:1;overflow:hidden;position:relative}
-#ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 90s linear infinite;font-family:'DM Mono',monospace;font-size:12px;color:rgba(250,250,247,.45);letter-spacing:.4px}
+#ticker-track{display:flex;white-space:nowrap;animation:tickerScroll 90s linear infinite;font-family:'Press Start 2P',monospace;font-size:9px;color:#00FF41;letter-spacing:.5px;text-shadow:0 0 4px rgba(0,255,65,.3)}
 @keyframes tickerScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 /* Prompt */
-#interact-prompt{position:absolute;pointer-events:none;font-family:'DM Mono',monospace;font-size:13px;color:rgba(250,250,247,.7);letter-spacing:1.5px;text-align:center;transition:opacity .25s;z-index:5;text-shadow:0 2px 10px rgba(25,25,25,.95)}
+#interact-prompt{position:absolute;pointer-events:none;font-family:'Press Start 2P',monospace;font-size:9px;color:#FFD700;letter-spacing:1px;text-align:center;z-index:5;text-shadow:0 0 10px rgba(255,215,0,.5);animation:blink-prompt .8s step-end infinite}
+@keyframes blink-prompt{0%,49%{opacity:1}50%,100%{opacity:0}}
 /* Modal overlay */
-#modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(25,25,25,.85);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:50}
+#modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;z-index:50}
 #modal-overlay.open{display:flex}
-#center-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(25,25,25,.85);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:50}
+#center-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;z-index:50}
 #center-overlay.open{display:flex}
-#center-card{width:620px;max-height:580px;overflow-y:auto;background:#FAFAF7;border:1px solid #E5E4DF;border-radius:16px;padding:40px 44px 36px;position:relative;color:#191919}
+#center-card{width:600px;max-height:580px;overflow-y:auto;background:#000;border:3px solid #FFF;border-radius:0;padding:36px 40px 32px;position:relative;color:#FFF;box-shadow:inset 0 0 0 1px #444,0 0 30px rgba(0,255,255,.08)}
 #center-card::-webkit-scrollbar{width:5px}
-#center-card::-webkit-scrollbar-thumb{background:#BFBFBA;border-radius:3px}
-#modal-card{width:620px;max-height:580px;overflow-y:auto;background:#FAFAF7;border:1px solid #E5E4DF;border-radius:16px;padding:40px 44px 36px;position:relative;color:#191919}
+#center-card::-webkit-scrollbar-thumb{background:#444;border-radius:0}
+#modal-card{width:600px;max-height:580px;overflow-y:auto;background:#000;border:3px solid #FFF;border-radius:0;padding:36px 40px 32px;position:relative;color:#FFF;box-shadow:inset 0 0 0 1px #444,0 0 30px rgba(0,255,255,.08)}
 #modal-card::-webkit-scrollbar{width:5px}
-#modal-card::-webkit-scrollbar-thumb{background:#BFBFBA;border-radius:3px}
-.modal-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#91918D;font-size:22px;cursor:pointer;transition:color .2s;font-family:'DM Mono',monospace}
-.modal-close:hover{color:#191919}
-.modal-kicker{display:flex;align-items:center;gap:9px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:1px;margin-bottom:18px;color:#91918D}
+#modal-card::-webkit-scrollbar-thumb{background:#444;border-radius:0}
+.modal-close{position:absolute;top:14px;right:18px;background:none;border:none;color:#FF0040;font-size:18px;cursor:pointer;transition:color .2s;font-family:'Press Start 2P',monospace}
+.modal-close:hover{color:#FFF}
+.modal-kicker{display:flex;align-items:center;gap:9px;font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:1px;margin-bottom:16px;color:#BBBBCC}
 .modal-kicker .dot{width:9px;height:9px;border-radius:50%;animation:kickerBlink 1.2s infinite}
 @keyframes kickerBlink{0%,100%{opacity:1}50%{opacity:.2}}
-.modal-brand-name{font-family:'Inter',sans-serif;font-weight:900;font-size:44px;letter-spacing:1px;line-height:1;margin-bottom:6px}
-.modal-tagline{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2.5px;color:#91918D;text-transform:uppercase;margin-bottom:26px}
-.modal-signal{border-left:3px solid;padding:16px 20px;border-radius:0 10px 10px 0;margin-bottom:24px;font-family:'DM Mono',monospace;font-size:12.5px;line-height:1.7;color:#40403E;background:#F0F0EB}
-.modal-signal .signal-label{font-size:10px;letter-spacing:2.5px;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:7px}
-.modal-desc{font-family:'Source Serif 4',serif;font-size:15.5px;line-height:1.75;color:#262625;margin-bottom:32px}
-.modal-cta{display:block;width:100%;padding:16px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;color:#FAFAF7;cursor:pointer;letter-spacing:.5px;transition:filter .2s}
-.modal-cta:hover{filter:brightness(1.1)}
+.modal-brand-name{font-family:'Press Start 2P',monospace;font-weight:400;font-size:18px;letter-spacing:2px;line-height:1.3;margin-bottom:8px}
+.modal-tagline{font-family:'Press Start 2P',monospace;font-size:8px;letter-spacing:2px;color:#BBBBCC;text-transform:uppercase;margin-bottom:24px;line-height:1.8}
+.modal-signal{border-left:3px solid;padding:14px 18px;border-radius:0;margin-bottom:22px;font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;color:#AAAACC;background:#0A0A2E}
+.modal-signal .signal-label{font-family:'Press Start 2P',monospace;font-size:6px;letter-spacing:2px;font-weight:400;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.modal-desc{font-family:'DM Mono',monospace;font-size:12px;line-height:1.8;color:#AAAACC;margin-bottom:28px}
+.modal-cta{display:block;width:100%;padding:14px;border:2px solid #FFF;border-radius:0;font-family:'Press Start 2P',monospace;font-size:9px;color:#000;cursor:pointer;letter-spacing:.5px;transition:filter .2s;box-shadow:0 0 15px currentColor}
+.modal-cta:hover{filter:brightness(1.15)}
 /* Completion overlay */
-#completion-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(25,25,25,.9);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:60}
+#completion-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.95);display:none;justify-content:center;align-items:center;z-index:60}
 #completion-overlay.open{display:flex}
-#completion-card{text-align:center;max-width:600px;padding:52px 48px;background:#FAFAF7;border-radius:20px;border:1px solid #E5E4DF;color:#191919}
-.comp-eyebrow{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:2.5px;color:#91918D;text-transform:uppercase;margin-bottom:18px}
-.comp-headline{font-family:'Source Serif 4',serif;font-weight:700;font-size:48px;letter-spacing:-.5px;line-height:1.1;margin-bottom:18px;color:#191919}
-.comp-sub{font-size:16px;line-height:1.75;color:#666663;margin-bottom:36px;font-family:'Source Serif 4',serif}
-.comp-chips{display:flex;justify-content:center;gap:10px;margin-bottom:36px;flex-wrap:wrap}
-.comp-chip{padding:7px 16px;border-radius:22px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;border:1.5px solid;background:#FAFAF7}
-.comp-cta{display:inline-block;padding:22px 60px;border-radius:10px;background:#CC785C;color:#FAFAF7;font-family:'Inter',sans-serif;font-size:22px;font-weight:700;text-decoration:none;letter-spacing:.5px;transition:filter .2s;margin-bottom:30px}
-.comp-cta:hover{filter:brightness(1.1)}
-.comp-contacts{font-family:'DM Mono',monospace;font-size:15px;color:#91918D;line-height:1.9}
-.comp-contacts a{color:#666663;text-decoration:none}
-.comp-contacts a:hover{color:#191919}
-.comp-close{position:absolute;top:22px;right:26px;background:none;border:none;color:#91918D;font-size:20px;cursor:pointer;font-family:'DM Mono',monospace;z-index:61}
-.comp-close:hover{color:#191919}
+#completion-card{text-align:center;max-width:580px;padding:44px 40px;background:#000;border-radius:0;border:3px solid #FFD700;color:#FFF;box-shadow:0 0 40px rgba(255,215,0,.12)}
+.comp-eyebrow{font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:2px;color:#00FF41;text-transform:uppercase;margin-bottom:18px;text-shadow:0 0 8px rgba(0,255,65,.4)}
+.comp-headline{font-family:'Press Start 2P',monospace;font-weight:400;font-size:20px;letter-spacing:1px;line-height:1.4;margin-bottom:18px;color:#FFD700;text-shadow:0 0 20px rgba(255,215,0,.4)}
+.comp-sub{font-size:11px;line-height:1.8;color:#AAAACC;margin-bottom:32px;font-family:'DM Mono',monospace}
+.comp-chips{display:flex;justify-content:center;gap:10px;margin-bottom:32px;flex-wrap:wrap}
+.comp-chip{padding:6px 14px;border-radius:0;font-family:'Press Start 2P',monospace;font-size:5px;font-weight:400;border:1.5px solid;background:#000}
+.comp-cta{display:inline-block;padding:18px 48px;border-radius:0;background:#FF0040;color:#FFF;font-family:'Press Start 2P',monospace;font-size:10px;font-weight:400;text-decoration:none;letter-spacing:.5px;transition:filter .2s;margin-bottom:28px;border:2px solid #FFF;box-shadow:0 0 20px rgba(255,0,64,.3)}
+.comp-cta:hover{filter:brightness(1.15)}
+.comp-contacts{font-family:'DM Mono',monospace;font-size:11px;color:#666688;line-height:1.9}
+.comp-contacts a{color:#00FFFF;text-decoration:none}
+.comp-contacts a:hover{color:#FFF}
+.comp-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#FF0040;font-size:16px;cursor:pointer;font-family:'Press Start 2P',monospace;z-index:61}
+.comp-close:hover{color:#FFF}
 /* Intro hint */
-#intro-hint{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:13px;color:rgba(250,250,247,.55);letter-spacing:1.2px;pointer-events:none;z-index:5;transition:opacity 1s;white-space:nowrap}
+#intro-hint{position:absolute;bottom:110px;left:50%;transform:translateX(-50%);font-family:'Press Start 2P',monospace;font-size:7px;color:rgba(255,255,255,.55);letter-spacing:1px;pointer-events:none;z-index:5;transition:opacity 1s;white-space:nowrap}
 /* Welcome overlay */
-#welcome-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(25,25,25,.92);backdrop-filter:blur(12px);display:flex;justify-content:center;align-items:center;z-index:100}
-#welcome-card{text-align:center;max-width:480px;padding:44px 48px;background:#FAFAF7;border-radius:16px;border:1px solid #E5E4DF;color:#191919}
-#welcome-card h2{font-family:'Source Serif 4',serif;font-weight:700;font-size:32px;margin-bottom:12px;color:#191919;letter-spacing:-.3px}
-#welcome-card p{font-family:'Source Serif 4',serif;font-size:15px;line-height:1.7;color:#40403E;margin-bottom:8px}
-#welcome-card .keys{font-family:'DM Mono',monospace;font-size:13px;color:#666663;margin:16px 0;letter-spacing:.5px}
-#welcome-card .keys kbd{display:inline-block;padding:4px 10px;background:#F0F0EB;border:1px solid #E5E4DF;border-radius:5px;font-family:'DM Mono',monospace;font-size:12px;margin:0 2px}
-#welcome-btn{display:inline-block;margin-top:20px;padding:14px 44px;border:none;border-radius:10px;background:#CC785C;color:#FAFAF7;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:filter .2s}
-#welcome-btn:hover{filter:brightness(1.1)}
+#welcome-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.96);display:flex;justify-content:center;align-items:center;z-index:100}
+#welcome-card{text-align:center;max-width:480px;padding:40px 44px;background:#000;border-radius:0;border:3px solid #00FFFF;color:#FFF;box-shadow:0 0 40px rgba(0,255,255,.1)}
+#welcome-card h2{font-family:'Press Start 2P',monospace;font-weight:400;font-size:16px;margin-bottom:16px;color:#00FFFF;letter-spacing:1px;text-shadow:0 0 15px rgba(0,255,255,.4);line-height:1.6}
+#welcome-card p{font-family:'DM Mono',monospace;font-size:12px;line-height:1.7;color:#AAAACC;margin-bottom:8px}
+#welcome-card .keys{font-family:'Press Start 2P',monospace;font-size:6px;color:#888899;margin:16px 0;letter-spacing:.5px;line-height:2}
+#welcome-card .keys kbd{display:inline-block;padding:4px 10px;background:#1A1A3E;border:1px solid #444;border-radius:0;font-family:'Press Start 2P',monospace;font-size:6px;margin:0 2px;color:#FFD700}
+#welcome-btn{display:inline-block;margin-top:20px;padding:14px 40px;border:2px solid #FFF;border-radius:0;background:#FF0040;color:#FFF;font-family:'Press Start 2P',monospace;font-size:10px;font-weight:400;cursor:pointer;letter-spacing:1px;transition:filter .2s;box-shadow:0 0 15px rgba(255,0,64,.3)}
+#welcome-btn:hover{filter:brightness(1.15)}
 /* ── MOBILE TOUCH JOYSTICK ───────────────────── */
 #touch-joystick{display:none;position:absolute;bottom:28px;left:28px;width:120px;height:120px;z-index:15;pointer-events:auto}
-#touch-joystick-base{width:120px;height:120px;border-radius:50%;background:rgba(250,250,247,.06);border:1.5px solid rgba(250,250,247,.1)}
-#touch-joystick-thumb{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(204,120,92,.35);border:1.5px solid rgba(204,120,92,.5);pointer-events:none;transition:none}
-#touch-dock-btn{display:none;position:absolute;bottom:48px;right:28px;width:72px;height:72px;border-radius:50%;background:rgba(204,120,92,.25);border:2px solid rgba(204,120,92,.5);z-index:15;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(250,250,247,.7);text-align:center;line-height:72px}
+#touch-joystick-base{width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.04);border:2px solid rgba(0,255,255,.2)}
+#touch-joystick-thumb{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(255,0,64,.3);border:2px solid rgba(255,0,64,.5);pointer-events:none;transition:none}
+#touch-dock-btn{display:none;position:absolute;bottom:48px;right:28px;width:72px;height:72px;border-radius:0;background:rgba(255,0,64,.2);border:2px solid rgba(255,0,64,.5);z-index:15;font-family:'Press Start 2P',monospace;font-size:7px;letter-spacing:1px;color:rgba(255,255,255,.7);text-align:center;line-height:72px}
 /* ── MOBILE RESPONSIVE ───────────────────────── */
 @media(max-width:768px){
-  #nav-bar{padding:8px 14px;gap:8px}
-  #nav-logo{font-size:14px;letter-spacing:1.5px}
-  .nav-anthro-logo{height:10px}
-  #nav-headline{font-size:12px;padding:0 8px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  #nav-score{font-size:11px}
-  #contact-strip{flex-direction:column;gap:6px;padding:10px 14px;font-size:11px}
+  #nav-bar{padding:6px 10px;gap:6px}
+  #nav-logo{font-size:8px;letter-spacing:1px}
+  .nav-anthro-logo{height:8px}
+  #nav-headline{font-size:5px;padding:0 6px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #nav-score{font-size:7px}
+  #contact-strip{flex-direction:column;gap:6px;padding:10px 14px;font-size:7px}
   #contact-strip .sep{display:none}
-  #ticker{height:32px}
-  #ticker-track{font-size:10px}
-  #ticker-live{font-size:9px;padding:0 10px}
-  #modal-card,#center-card{width:92vw;max-height:80vh;padding:28px 22px 24px}
-  .modal-brand-name{font-size:28px!important}
-  .modal-tagline{font-size:10px;letter-spacing:2px;margin-bottom:18px}
-  .modal-signal{padding:12px 14px;font-size:11.5px;margin-bottom:18px}
-  .modal-signal .signal-label{font-size:9px}
-  .modal-desc{font-size:14px;margin-bottom:22px}
-  .modal-cta{font-size:14px;padding:14px}
-  .modal-kicker{font-size:10px}
-  #completion-card{padding:32px 24px;max-width:92vw}
-  .comp-headline{font-size:32px}
-  .comp-sub{font-size:14px;margin-bottom:24px}
-  .comp-cta{font-size:17px;padding:16px 36px}
-  .comp-contacts{font-size:12px;line-height:1.7}
-  .comp-eyebrow{font-size:10px;letter-spacing:2px}
-  .comp-chips{gap:6px;margin-bottom:24px}
-  .comp-chip{font-size:9px;padding:5px 12px}
-  #welcome-card{max-width:88vw;padding:32px 24px}
-  #welcome-card h2{font-size:26px}
-  #welcome-card p{font-size:13px}
-  #welcome-card .keys{font-size:11px}
-  #welcome-card .keys kbd{padding:3px 8px;font-size:10px}
-  #welcome-btn{font-size:15px;padding:12px 36px}
-  #intro-hint{font-size:11px;bottom:160px}
-  #interact-prompt{font-size:11px}
+  #ticker{height:34px}
+  #ticker-track{font-size:7px}
+  #ticker-live{font-size:7px;padding:0 10px}
+  #modal-card,#center-card{width:92vw;max-height:80vh;padding:24px 18px 20px}
+  .modal-brand-name{font-size:12px!important}
+  .modal-tagline{font-size:5px;letter-spacing:1.5px;margin-bottom:16px}
+  .modal-signal{padding:10px 12px;font-size:10px;margin-bottom:16px}
+  .modal-signal .signal-label{font-size:5px}
+  .modal-desc{font-size:11px;margin-bottom:18px}
+  .modal-cta{font-size:7px;padding:12px}
+  .modal-kicker{font-size:5px}
+  #completion-card{padding:28px 20px;max-width:92vw}
+  .comp-headline{font-size:14px}
+  .comp-sub{font-size:10px;margin-bottom:20px}
+  .comp-cta{font-size:8px;padding:14px 28px}
+  .comp-contacts{font-size:10px;line-height:1.7}
+  .comp-eyebrow{font-size:6px;letter-spacing:1.5px}
+  .comp-chips{gap:6px;margin-bottom:20px}
+  .comp-chip{font-size:4px;padding:4px 10px}
+  #welcome-card{max-width:88vw;padding:28px 20px}
+  #welcome-card h2{font-size:12px}
+  #welcome-card p{font-size:11px}
+  #welcome-card .keys{font-size:5px}
+  #welcome-card .keys kbd{padding:3px 6px;font-size:5px}
+  #welcome-btn{font-size:8px;padding:12px 28px}
+  #intro-hint{font-size:6px;bottom:160px}
+  #interact-prompt{font-size:7px}
   #touch-joystick{display:block}
   #touch-dock-btn{display:block}
 }
 @media(max-width:400px){
   #nav-headline{display:none}
-  #contact-strip{font-size:10px}
-  .modal-brand-name{font-size:24px!important}
-  .comp-headline{font-size:26px}
+  #contact-strip{font-size:4px}
+  .modal-brand-name{font-size:10px!important}
+  .comp-headline{font-size:12px}
 }
 </style>
 </head>
 <body>
 <nav id="nav-bar">
-  <div id="nav-logo">24 SEVEN <span>x</span> <img src="logos/anthropic.svg" alt="Anthropic" class="nav-anthro-logo"></div>
-  <div id="nav-headline">Anthropic marketing team: You already work with one of us. Here&rsquo;s what activating our full network can do for you.</div>
-  <div id="nav-score"><span id="score-count">0</span> out of 4
-  </div>
+  <div id="nav-logo">1UP <span>&middot;</span> 24SEVEN <span>&times;</span> <img src="logos/anthropic.svg" alt="Anthropic" class="nav-anthro-logo"></div>
+  <div id="nav-headline">DESTROY ALL GAPS IN YOUR MARKETING FLEET</div>
+  <div id="nav-score">SCORE <span id="score-count">0</span>/4</div>
 </nav>
 <div id="game-wrapper">
   <canvas id="game"></canvas>
-  <div id="interact-prompt" style="opacity:0">SPACE TO DOCK</div>
-  <div id="intro-hint">WASD / ARROW KEYS TO FLY &middot; SPACE TO DOCK WITH SATELLITES</div>
+  <div id="interact-prompt" style="opacity:0">FIRE TO DOCK</div>
+  <div id="intro-hint">WASD / ARROW KEYS TO FLY &middot; SPACE TO DOCK WITH SQUADRONS</div>
   <div id="touch-joystick"><div id="touch-joystick-base"><div id="touch-joystick-thumb"></div></div></div>
   <div id="touch-dock-btn">DOCK</div>
 </div>
@@ -176,33 +179,33 @@ canvas{display:block;width:100%;height:100%;cursor:none}
       <div id="modal-signal-text"></div>
     </div>
     <div class="modal-desc" id="modal-desc"></div>
-    <button class="modal-cta" id="modal-cta">Continue exploring &rarr;</button>
+    <button class="modal-cta" id="modal-cta">CONTINUE &rarr;</button>
   </div>
 </div>
 <!-- Center World Modal -->
 <div id="center-overlay">
   <div id="center-card">
     <button class="modal-close" id="center-close-btn">&times;</button>
-    <div class="modal-kicker"><span class="dot" style="background:#CC785C"></span><span style="color:#CC785C">The Creative Universe &middot; 24 Seven Group</span></div>
-    <div class="modal-brand-name" style="color:#191919">24 Seven <span style="color:#CC785C">&times;</span> Anthropic</div>
+    <div class="modal-kicker"><span class="dot" style="background:#FF0040"></span><span style="color:#FF0040">THE CREATIVE UNIVERSE &middot; 24 SEVEN GROUP</span></div>
+    <div class="modal-brand-name" style="color:#FFF">24 SEVEN <span style="color:#FF0040">&times;</span> ANTHROPIC</div>
     <div class="modal-tagline">FOUR BRANDS. ONE MISSION. INFINITE POTENTIAL.</div>
-    <div class="modal-signal" style="border-color:#CC785C;background:#F0F0EB">
-      <div class="signal-label" style="color:#CC785C">&#x1F30D; THE PARTNERSHIP</div>
+    <div class="modal-signal" style="border-color:#FF0040;background:#0A0A2E">
+      <div class="signal-label" style="color:#FF0040">&#x1F30D; THE PARTNERSHIP</div>
       <div>Anthropic is building the future of AI. 24 Seven is the creative network that makes it visible: four specialized agencies, one integrated partner.</div>
     </div>
     <div class="modal-desc">Anthropic&rsquo;s marketing ambitions are growing faster than any single agency can serve. The 24 Seven group brings something different: four specialist agencies that operate independently but deploy as one. From executive presentations and brand design to performance marketing, immersive experiences, and senior marketing talent, every capability Anthropic needs is already under one roof. The Sage Group is an existing partner. This is what the full picture looks like.</div>
-    <button class="modal-cta" id="center-cta" style="background:#CC785C">Explore the satellites &rarr;</button>
+    <button class="modal-cta" id="center-cta" style="background:#FF0040">EXPLORE THE SQUADRONS &rarr;</button>
   </div>
 </div>
 <!-- Completion -->
 <div id="completion-overlay">
   <button class="comp-close" id="comp-close-btn">&times;</button>
   <div id="completion-card">
-    <div class="comp-eyebrow">Mission Complete &middot; 4/4 Satellites Online</div>
-    <div class="comp-headline">You know the network.</div>
+    <div class="comp-eyebrow">MISSION COMPLETE &middot; 4/4 SQUADRONS ONLINE</div>
+    <div class="comp-headline">YOU KNOW THE NETWORK.</div>
     <div class="comp-sub">Anthropic is in the most important moment in AI history. 24 Seven is the creative network already inside it. The next move is yours.</div>
     <div class="comp-chips" id="comp-chips"></div>
-    <a class="comp-cta" href="https://hello.sketchdeck.com/meetings/elliot-miller-sd/30-minute-meeting?uuid=aeb1d169-b2cb-4d24-bc22-128e143e8299" target="_blank">Schedule a Meeting &rarr;</a>
+    <a class="comp-cta" href="https://hello.sketchdeck.com/meetings/elliot-miller-sd/30-minute-meeting?uuid=aeb1d169-b2cb-4d24-bc22-128e143e8299" target="_blank">SCHEDULE A MEETING &rarr;</a>
     <div class="comp-contacts">
       Nicole Greene &middot; <a href="mailto:ngreene@thesagegroup.co">ngreene@thesagegroup.co</a> &middot; VP Client Services<br>
       Elliot Miller &middot; <a href="mailto:elliot.miller@sketchdeck.com">elliot.miller@sketchdeck.com</a> &middot; Creative Partnerships
@@ -212,28 +215,34 @@ canvas{display:block;width:100%;height:100%;cursor:none}
 <!-- Welcome Alert -->
 <div id="welcome-overlay">
   <div id="welcome-card">
-    <h2>Welcome to<br>24 Seven World</h2>
-    <p>Pilot your ship through space and activate the 4 agency satellites to send signal to 24 Seven World.</p>
+    <h2>PRESS START<br>24 SEVEN WORLD</h2>
+    <p>Pilot your fighter through the arcade and activate the 4 agency squadrons to send signal to 24 Seven World.</p>
     <div class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or <kbd>&uarr;</kbd><kbd>&darr;</kbd><kbd>&larr;</kbd><kbd>&rarr;</kbd> to fly &nbsp;&middot;&nbsp; <kbd>SPACE</kbd> to dock</div>
-    <p style="font-size:13px;color:#91918D">You can also click satellites and the center world with your mouse.</p>
-    <button id="welcome-btn">Launch &rarr;</button>
+    <p style="font-size:11px;color:#666688">You can also click squadrons and the center world with your mouse.</p>
+    <button id="welcome-btn">START GAME &rarr;</button>
   </div>
 </div>
 
 <script>
-/* ── ANTHROPIC PALETTE ────────────────────────── */
+/* ── ARCADE PALETTE ──────────────────────────── */
 const PAL = {
-  slateDk:'#191919', slateMd:'#262625', slateLt:'#40403E',
-  cloudDk:'#666663', cloudMd:'#91918D', cloudLt:'#BFBFBA',
-  ivoryDk:'#E5E4DF', ivoryMd:'#F0F0EB', ivoryLt:'#FAFAF7',
-  bookCloth:'#CC785C', kraft:'#D4A27F', manilla:'#EBDBBC',
-  error:'#BF4D43', focus:'#61AAF2'
+  black:'#000000', darkBlue:'#0A0A2E', white:'#FFFFFF',
+  red:'#FF0040', cyan:'#00FFFF', yellow:'#FFD700',
+  green:'#00FF41', blue:'#4444FF', magenta:'#FF00FF',
+  orange:'#FF6600', teal:'#00C8A0',
+  dimWhite:'#888899', scanline:'rgba(0,0,0,0.12)',
+  // Mapped aliases for compatibility
+  bookCloth:'#FF0040', kraft:'#FFD700', manilla:'#00FFFF',
+  ivoryLt:'#FFFFFF', ivoryMd:'#0A0A2E', ivoryDk:'#0A0A1E',
+  cloudDk:'#444466', cloudMd:'#666688', cloudLt:'#8888AA',
+  slateDk:'#000000', slateMd:'#111122', slateLt:'#222244',
+  error:'#FF0040', focus:'#00FFFF'
 };
 
 /* ── DATA ─────────────────────────────────────── */
 const BRANDS = [
   {
-    id:'sage', name:'THE SAGE GROUP', emoji:'🌿', color:'#00E5A0',
+    id:'sage', name:'THE SAGE GROUP', emoji:'🌿', color:'#00FF41',
     kicker:'Marketing Talent · The Existing Partner',
     tagline:'THE MARKETING TALENT PARTNER ALREADY INSIDE ANTHROPIC',
     liveSignal:'Anthropic\u2019s marketing org is expanding globally across SF, NY, London, and beyond. Open roles span product marketing, GTM narrative, field marketing, events, and presentation design. Sage is already in the building.',
@@ -241,7 +250,7 @@ const BRANDS = [
     x:0, y:0
   },
   {
-    id:'sketchdeck', name:'SKETCHDECK', emoji:'🎨', color:'#FF5300',
+    id:'sketchdeck', name:'SKETCHDECK', emoji:'🎨', color:'#FF6600',
     kicker:'Creative Production · The Execution Engine',
     tagline:'ALL THE DESIGN SERVICES YOU NEED, AT THE SPEED YOU\'RE MOVING',
     liveSignal:'\u201CKeep Thinking\u201D is live across 12 cities. The Williams FW48 livery just debuted in Melbourne. The brief doesn\'t stop. Neither do we.',
@@ -249,7 +258,7 @@ const BRANDS = [
     x:0, y:0
   },
   {
-    id:'markacy', name:'MARKACY', emoji:'📡', color:'#00C8FF',
+    id:'markacy', name:'MARKACY', emoji:'📡', color:'#00FFFF',
     kicker:'Performance Marketing · The Growth Optimizer',
     tagline:'CONNECT EVERY MARKETING DOLLAR DIRECTLY TO REVENUE',
     liveSignal:'Claude hit #1 in the App Store across 20+ countries. Search intent is spiking. OpenAI is spending aggressively. The window is open and competitive. Markacy turns that heat into pipeline.',
@@ -257,7 +266,7 @@ const BRANDS = [
     x:0, y:0
   },
   {
-    id:'futureman', name:'FUTUREMAN', emoji:'⚡', color:'#FFD600',
+    id:'futureman', name:'FUTUREMAN', emoji:'⚡', color:'#FFD700',
     kicker:'Experiential & Creative · The Experience Builder',
     tagline:'WHERE CLAUDE MEETS THE PHYSICAL WORLD',
     liveSignal:'F1 season is live across 20 races in 20 countries. Claude Labs is shipping experimental products. The experiential opportunities haven\u2019t been designed yet. Futureman designs them.',
@@ -319,103 +328,36 @@ function loadLogos() {
   ]);
 }
 
-/* ── STARFIELD (layered parallax with depth) ──── */
+/* ── STARFIELD (arcade style) ────────────────── */
 const stars = [];
 function initStars() {
-  const LAYERS = [
-    // Layer 0: Deep background — tiny, faint, slow parallax, many stars
-    { count: 500, rMin: .3, rMax: .7, aMin: .06, aMax: .14, twMin: .003, twMax: .012, parallax: .02 },
-    // Layer 1: Mid-field — small, moderate brightness
-    { count: 250, rMin: .6, rMax: 1.2, aMin: .12, aMax: .3, twMin: .006, twMax: .025, parallax: .06 },
-    // Layer 2: Near-field — medium, brighter, faster twinkle
-    { count: 100, rMin: 1.0, rMax: 1.8, aMin: .25, aMax: .5, twMin: .01, twMax: .04, parallax: .12 },
-    // Layer 3: Foreground — large bright stars, cross-flares
-    { count: 30, rMin: 1.5, rMax: 2.8, aMin: .4, aMax: .7, twMin: .015, twMax: .05, parallax: .2 }
-  ];
-  const warmColors = [
-    '#FAFAF7','#FAFAF7','#FAFAF7',  // white (most common)
-    '#F0F0EB','#E5E4DF',             // ivory
-    '#EBDBBC','#D4A27F',             // warm
-    '#dbc8a0','#c9b896'              // golden
-  ];
-  const starMult = (W < 768) ? 0.5 : 1;
-  LAYERS.forEach((L, li) => {
-    for (let i = 0; i < Math.round(L.count * starMult); i++) {
-      stars.push({
-        x: Math.random() * W, y: Math.random() * H,
-        r: L.rMin + Math.random() * (L.rMax - L.rMin),
-        base: L.aMin + Math.random() * (L.aMax - L.aMin),
-        twinkle: L.twMin + Math.random() * (L.twMax - L.twMin),
-        twinkle2: .002 + Math.random() * .008, // secondary slow oscillation
-        phase: Math.random() * Math.PI * 2,
-        phase2: Math.random() * Math.PI * 2,
-        color: warmColors[Math.floor(Math.random() * warmColors.length)],
-        layer: li,
-        parallax: L.parallax,
-        flicker: Math.random() < .15 ? .03 + Math.random() * .06 : 0 // occasional rapid flicker
-      });
-    }
-  });
-}
-
-/* ── NEBULA (Anthropic warm tones) ────────────── */
-const nebulae = [];
-function initNebulae() {
-  const colors = [PAL.bookCloth, PAL.kraft, PAL.manilla, PAL.cloudLt];
-  for (let i = 0; i < 14; i++) {
-    nebulae.push({
-      x: Math.random() * W, y: Math.random() * H,
-      r: 100 + Math.random() * 220,
-      color: colors[i % 4],
-      alpha: .008 + Math.random() * .014
+  stars.length = 0;
+  const count = (W < 768) ? 80 : 160;
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: 0.8 + Math.random() * 1.2,
+      alpha: 0.4 + Math.random() * 0.6,
+      twinkle: 0.005 + Math.random() * 0.01,
+      phase: Math.random() * Math.PI * 2,
+      scrollSpeed: 0.1 + Math.random() * 0.3
     });
-  }
-}
-
-/* ── SHOOTING STARS ───────────────────────────── */
-const shootingStars = [];
-
-/* ── DUST ─────────────────────────────────────── */
-const dust = [];
-function initDust() {
-  const dustColors = [PAL.bookCloth, PAL.kraft, PAL.manilla, PAL.ivoryDk];
-  for (let i = 0; i < 50; i++) {
-    dust.push({
-      x: Math.random() * W, y: Math.random() * H,
-      vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25,
-      r: 1.2 + Math.random() * 1.8, color: dustColors[i % 4],
-      alpha: .04 + Math.random() * .08
-    });
-  }
-}
-
-/* ── CONSTELLATION NODES (decorative) ─────────── */
-const constellations = [];
-function initConstellations() {
-  for (let i = 0; i < 8; i++) {
-    const cx = 80 + Math.random() * (W - 160);
-    const cy = 80 + Math.random() * (H - 160);
-    if (Math.hypot(cx - CX, cy - CY) < 160) continue;
-    const nodes = [];
-    const count = 3 + Math.floor(Math.random() * 3);
-    for (let j = 0; j < count; j++) {
-      nodes.push({ x: cx + (Math.random()-.5)*80, y: cy + (Math.random()-.5)*60 });
-    }
-    constellations.push({ nodes, alpha: .03 + Math.random() * .04 });
   }
 }
 
 /* ── CELEBRATION ──────────────────────────────── */
 const celebParticles = [];
 function spawnCelebration() {
-  for (let i = 0; i < 180; i++) {
+  const arcadeColors = ['#FF0040','#00FFFF','#FFD700','#00FF41','#FF00FF','#4444FF'];
+  for (let i = 0; i < 200; i++) {
     const a = Math.random() * Math.PI * 2;
-    const spd = 2 + Math.random() * 8;
+    const spd = 3 + Math.random() * 10;
     celebParticles.push({
       x: CX, y: CY,
       vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
-      r: 2 + Math.random() * 5,
-      color: i % 5 === 0 ? PAL.bookCloth : BRANDS[i % 4].color,
+      r: 2 + Math.random() * 4,
+      color: arcadeColors[Math.floor(Math.random() * arcadeColors.length)],
       life: 1
     });
   }
@@ -434,7 +376,6 @@ function resizeCanvas() {
   canvas.width = W * dpr;
   canvas.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  // Re-scale everything relative to smallest dimension
   const scale = Math.min(W, H) / 800;
   PLANET_R = Math.round(130 * scale);
   SAT_R = Math.round(38 * scale);
@@ -444,7 +385,7 @@ function resizeCanvas() {
   ORBITS[2].radius = 285 * scale;
   ORBITS[3].radius = 255 * scale;
 }
-window.addEventListener('resize', () => { resizeCanvas(); initStars(); initNebulae(); initDust(); initConstellations(); });
+window.addEventListener('resize', () => { resizeCanvas(); initStars(); });
 
 /* ── TICKER INIT ──────────────────────────────── */
 document.querySelector('#ticker-track span').textContent = TICKER_TEXT + TICKER_TEXT;
@@ -515,7 +456,7 @@ function openModal(idx) {
   document.getElementById('modal-tagline').textContent = b.tagline;
   const sig = document.getElementById('modal-signal');
   sig.style.borderColor = b.color;
-  sig.style.background = PAL.ivoryMd;
+  sig.style.background = PAL.darkBlue;
   document.getElementById('modal-signal-label').style.color = b.color;
   document.getElementById('modal-signal-text').textContent = b.liveSignal;
   document.getElementById('modal-desc').textContent = b.desc;
@@ -561,13 +502,91 @@ function hexToRgba(hex, a) {
 }
 function dst(x1,y1,x2,y2) { return Math.hypot(x2-x1,y2-y1); }
 
+/* ── PIXEL SPRITE DATA ────────────────────────── */
+
+// Enemy sprites (satellites) - 12x10 grids
+// 0=transparent, 1=brand color, 2=white highlight, 3=dark shade
+const ENEMY_SPRITES = [
+  // Sage - Green Alien (Boss minion)
+  [
+    [0,0,0,0,1,1,1,1,0,0,0,0],
+    [0,0,0,1,1,1,1,1,1,0,0,0],
+    [0,0,1,2,1,1,1,1,2,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [1,1,1,2,1,1,1,1,2,1,1,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1],
+    [0,1,1,1,3,1,1,3,1,1,1,0],
+    [0,0,1,1,1,1,1,1,1,1,0,0],
+    [0,1,0,1,0,1,1,0,1,0,1,0],
+    [1,0,0,0,1,0,0,1,0,0,0,1],
+  ],
+  // SketchDeck - Butterfly
+  [
+    [0,0,0,0,1,0,0,1,0,0,0,0],
+    [0,0,0,0,1,1,1,1,0,0,0,0],
+    [0,0,0,1,2,1,1,2,1,0,0,0],
+    [0,0,1,1,1,1,1,1,1,1,0,0],
+    [0,1,1,1,2,1,1,2,1,1,1,0],
+    [1,1,0,1,1,1,1,1,1,0,1,1],
+    [1,0,0,1,1,1,1,1,1,0,0,1],
+    [1,0,0,0,1,1,1,1,0,0,0,1],
+    [0,0,0,1,0,0,0,0,1,0,0,0],
+    [0,0,1,0,0,0,0,0,0,1,0,0],
+  ],
+  // Markacy - Bee
+  [
+    [0,0,0,0,2,2,2,2,0,0,0,0],
+    [0,0,0,2,1,1,1,1,2,0,0,0],
+    [0,0,2,1,1,1,1,1,1,2,0,0],
+    [0,2,1,1,2,1,1,2,1,1,2,0],
+    [0,2,1,1,1,1,1,1,1,1,2,0],
+    [0,0,2,1,1,1,1,1,1,2,0,0],
+    [0,0,0,2,1,1,1,1,2,0,0,0],
+    [0,0,0,0,2,2,2,2,0,0,0,0],
+    [0,1,0,0,0,1,1,0,0,0,1,0],
+    [1,0,0,0,0,0,0,0,0,0,0,1],
+  ],
+  // Futureman - Scorpion/Dragonfly
+  [
+    [0,0,1,0,0,0,0,0,0,1,0,0],
+    [0,0,0,1,0,0,0,0,1,0,0,0],
+    [0,0,0,0,1,1,1,1,0,0,0,0],
+    [0,0,0,1,2,1,1,2,1,0,0,0],
+    [0,0,1,1,1,1,1,1,1,1,0,0],
+    [0,1,1,1,1,1,1,1,1,1,1,0],
+    [1,1,0,1,1,1,1,1,1,0,1,1],
+    [1,0,0,1,0,1,1,0,1,0,0,1],
+    [0,0,1,0,0,1,1,0,0,1,0,0],
+    [0,1,0,0,0,0,0,0,0,0,1,0],
+  ],
+];
+
+// Galaga Fighter sprite (player ship) - facing right, 9x7 grid
+// 0=transparent, 1=white hull, 2=blue accent, 3=red wing tips
+const FIGHTER_SPRITE = [
+  [0,0,0,0,1,0,0,0,0],
+  [0,0,0,1,3,1,0,0,0],
+  [0,0,1,2,2,1,1,0,0],
+  [0,1,2,1,1,1,0,1,0],
+  [1,1,1,1,1,1,1,1,1],
+  [0,1,2,1,1,1,0,1,0],
+  [0,0,1,2,2,1,1,0,0],
+  [0,0,0,1,3,1,0,0,0],
+  [0,0,0,0,1,0,0,0,0],
+];
+const FIGHTER_COLORS = { 1:'#FFFFFF', 2:'#4444FF', 3:'#FF0040' };
+
 /* ── UPDATE ───────────────────────────────────── */
 function update() {
   time++;
   BRANDS.forEach((b, i) => {
     const o = ORBITS[i];
-    b.x = CX + o.radius * Math.cos(o.angle0 + time * o.speed);
-    b.y = CY + o.radius * Math.sin(o.angle0 + time * o.speed);
+    const baseX = CX + o.radius * Math.cos(o.angle0 + time * o.speed);
+    const baseY = CY + o.radius * Math.sin(o.angle0 + time * o.speed);
+    // Subtle formation wobble
+    const wobble = Math.sin(time * 0.003 + i * 1.5) * 4;
+    b.x = baseX + Math.cos(time * 0.01 + i) * wobble;
+    b.y = baseY + Math.sin(time * 0.01 + i) * wobble;
   });
   for (let i = 0; i < 4; i++) {
     if (visited[i] && beamAlpha[i] < 1) beamAlpha[i] = Math.min(1, beamAlpha[i] + .018);
@@ -586,7 +605,6 @@ function update() {
   if (keys['ArrowRight'] || keys['KeyD']) player.vx += accel;
   if (keys['ArrowUp']    || keys['KeyW']) player.vy -= accel;
   if (keys['ArrowDown']  || keys['KeyS']) player.vy += accel;
-  // Touch joystick input
   if (touchJoy.active) {
     player.vx += touchJoy.dx * accel;
     player.vy += touchJoy.dy * accel;
@@ -628,7 +646,6 @@ function update() {
     if (dst(player.x, player.y, BRANDS[i].x, BRANDS[i].y) < INTERACT_DIST) { nearSat = i; break; }
   }
   nearCenter = nearSat < 0 && dst(player.x, player.y, CX, CY) < PLANET_R + 20;
-  // Update dock button visibility on touch devices
   if (isTouchDevice) {
     const dockBtn = document.getElementById('touch-dock-btn');
     if (nearSat >= 0 || nearCenter) {
@@ -638,25 +655,6 @@ function update() {
       dockBtn.style.opacity = '.3';
       dockBtn.textContent = 'DOCK';
     }
-  }
-
-  dust.forEach(p => {
-    p.x += p.vx; p.y += p.vy;
-    if (p.x < -5) p.x = W+5; if (p.x > W+5) p.x = -5;
-    if (p.y < -5) p.y = H+5; if (p.y > H+5) p.y = -5;
-  });
-
-  if (Math.random() < .003) {
-    const a = .3 + Math.random() * .9;
-    shootingStars.push({
-      x: Math.random() * W, y: -5,
-      vx: Math.cos(a) * (8+Math.random()*6), vy: Math.sin(a) * (8+Math.random()*6),
-      life: 1, len: 35 + Math.random() * 50
-    });
-  }
-  for (let i = shootingStars.length - 1; i >= 0; i--) {
-    const s = shootingStars[i]; s.x += s.vx; s.y += s.vy; s.life -= .018;
-    if (s.life <= 0 || s.x > W+10 || s.y > H+10) shootingStars.splice(i, 1);
   }
 
   for (let i = celebParticles.length - 1; i >= 0; i--) {
@@ -669,18 +667,11 @@ function update() {
 
 /* ── RENDER ───────────────────────────────────── */
 function render() {
-  // Warm dark background
-  const bg = ctx.createRadialGradient(CX, CY, 100, CX, CY, H);
-  bg.addColorStop(0, '#1e1e1e');
-  bg.addColorStop(1, '#141413');
-  ctx.fillStyle = bg;
+  // Pure black background
+  ctx.fillStyle = '#000000';
   ctx.fillRect(0, 0, W, H);
 
-  drawNebulae();
-  drawConstellations();
   drawStars();
-  drawShootingStars();
-  drawDust();
   drawClaudeAsterisk();
   drawOrbitalRings();
   drawLightBeams();
@@ -693,237 +684,220 @@ function render() {
   updatePrompt();
 }
 
-function drawNebulae() {
-  nebulae.forEach(n => {
-    const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-    g.addColorStop(0, hexToRgba(n.color, n.alpha));
-    g.addColorStop(1, 'transparent');
-    ctx.fillStyle = g;
-    ctx.fillRect(n.x - n.r, n.y - n.r, n.r * 2, n.r * 2);
-  });
-}
-
-function drawConstellations() {
-  constellations.forEach(c => {
-    ctx.globalAlpha = c.alpha;
-    // Lines
-    ctx.strokeStyle = PAL.kraft;
-    ctx.lineWidth = .8;
-    for (let i = 0; i < c.nodes.length - 1; i++) {
-      ctx.beginPath();
-      ctx.moveTo(c.nodes[i].x, c.nodes[i].y);
-      ctx.lineTo(c.nodes[i+1].x, c.nodes[i+1].y);
-      ctx.stroke();
-    }
-    // Nodes
-    c.nodes.forEach(n => {
-      ctx.fillStyle = PAL.bookCloth;
-      ctx.beginPath(); ctx.arc(n.x, n.y, 2.5, 0, Math.PI * 2); ctx.fill();
-    });
-  });
-  ctx.globalAlpha = 1;
-}
-
+/* ── DRAW: STARS (arcade scrolling) ──────────── */
 function drawStars() {
-  // Parallax offset based on player position relative to center
-  const px = (player.x - CX) / W;
-  const py = (player.y - CY) / H;
-
+  ctx.fillStyle = '#FFFFFF';
   stars.forEach(s => {
-    // Parallax: stars shift opposite to player movement, scaled by layer depth
-    const sx = s.x - px * s.parallax * W;
-    const sy = s.y - py * s.parallax * H;
-    // Wrap around edges
-    const dx = ((sx % W) + W) % W;
-    const dy = ((sy % H) + H) % H;
-
-    // Multi-frequency twinkle for natural variation
-    let tw = s.base
-      + Math.sin(time * s.twinkle + s.phase) * s.base * .35
-      + Math.sin(time * s.twinkle2 + s.phase2) * s.base * .2;
-    // Rapid flicker for select stars
-    if (s.flicker > 0) {
-      tw += Math.sin(time * .15 + s.phase) * s.flicker * (Math.sin(time * .003 + s.phase2) > .3 ? 1 : 0);
-    }
-    tw = Math.max(0, tw);
-
-    ctx.globalAlpha = tw;
-    ctx.fillStyle = s.color;
-    ctx.beginPath(); ctx.arc(dx, dy, s.r, 0, Math.PI * 2); ctx.fill();
-
-    // Cross-flare on bright foreground stars (layer 3)
-    if (s.layer === 3 && tw > .45) {
-      const fl = (tw - .45) * .6;
-      const len = 4 + s.r * 3;
-      ctx.globalAlpha = fl;
-      ctx.strokeStyle = s.color;
-      ctx.lineWidth = .6;
-      ctx.beginPath(); ctx.moveTo(dx-len,dy); ctx.lineTo(dx+len,dy); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(dx,dy-len); ctx.lineTo(dx,dy+len); ctx.stroke();
-    }
-    // Subtle glow halo on near-field stars (layer 2+)
-    if (s.layer >= 2 && tw > .3) {
-      ctx.globalAlpha = tw * .12;
-      ctx.beginPath(); ctx.arc(dx, dy, s.r * 3.5, 0, Math.PI * 2); ctx.fill();
-    }
+    s.y += s.scrollSpeed;
+    if (s.y > H) { s.y = 0; s.x = Math.random() * W; }
+    const alpha = s.alpha + Math.sin(time * s.twinkle + s.phase) * 0.15;
+    ctx.globalAlpha = Math.max(0.05, alpha);
+    const sz = Math.max(1, Math.round(s.r));
+    ctx.fillRect(Math.round(s.x), Math.round(s.y), sz, sz);
   });
   ctx.globalAlpha = 1;
 }
 
-function drawShootingStars() {
-  shootingStars.forEach(s => {
-    ctx.save();
-    const a = Math.atan2(s.vy, s.vx);
-    const g = ctx.createLinearGradient(s.x,s.y, s.x-Math.cos(a)*s.len, s.y-Math.sin(a)*s.len);
-    g.addColorStop(0, `rgba(250,250,247,${s.life*.7})`);
-    g.addColorStop(1, 'transparent');
-    ctx.strokeStyle = g; ctx.lineWidth = 1.8;
-    ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(s.x-Math.cos(a)*s.len, s.y-Math.sin(a)*s.len); ctx.stroke();
-    ctx.restore();
-  });
-}
-
-function drawDust() {
-  dust.forEach(p => {
-    ctx.globalAlpha = p.alpha; ctx.fillStyle = p.color;
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
-  });
-  ctx.globalAlpha = 1;
-}
-
+/* ── DRAW: ORBITAL RINGS ─────────────────────── */
 function drawOrbitalRings() {
   ORBITS.forEach((o, i) => {
     ctx.save();
     ctx.beginPath(); ctx.arc(CX,CY,o.radius,0,Math.PI*2);
-    ctx.setLineDash([4, 18]);
+    ctx.setLineDash([2, 20]);
     ctx.lineDashOffset = time * (o.speed > 0 ? -.3 : .3);
-    ctx.strokeStyle = visited[i] ? hexToRgba(BRANDS[i].color, .12) : hexToRgba(PAL.cloudMd, .04);
-    ctx.lineWidth = visited[i] ? 1.2 : .7;
+    ctx.strokeStyle = visited[i] ? hexToRgba(BRANDS[i].color, .15) : 'rgba(68,68,102,0.06)';
+    ctx.lineWidth = 1;
     ctx.stroke(); ctx.setLineDash([]); ctx.restore();
   });
 }
 
+/* ── DRAW: LIGHT BEAMS (tractor beam style) ──── */
 function drawLightBeams() {
   BRANDS.forEach((b, i) => {
     if (beamAlpha[i] <= 0) return;
     const a = beamAlpha[i];
-    const dx = CX-b.x, dy = CY-b.y, d = Math.hypot(dx,dy);
+    const ddx = CX-b.x, ddy = CY-b.y, d = Math.hypot(ddx,ddy);
     if (d < 1) return;
-    const nx=dx/d, ny=dy/d;
+    const nx=ddx/d, ny=ddy/d;
     const ex = CX - nx*(PLANET_R+5), ey = CY - ny*(PLANET_R+5);
     const sx = b.x + nx*(SAT_R+3), sy = b.y + ny*(SAT_R+3);
 
     ctx.save();
-    // Wide glow
-    const gw = ctx.createLinearGradient(sx,sy,ex,ey);
-    gw.addColorStop(0, hexToRgba(b.color, .2*a));
-    gw.addColorStop(.5, hexToRgba(b.color, .06*a));
-    gw.addColorStop(1, hexToRgba(b.color, .28*a));
-    ctx.strokeStyle = gw; ctx.lineWidth = 10;
-    ctx.shadowColor = b.color; ctx.shadowBlur = 24;
-    ctx.globalAlpha = a * .35;
-    ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
-
-    // Core
     ctx.globalAlpha = a;
-    const gc = ctx.createLinearGradient(sx,sy,ex,ey);
-    gc.addColorStop(0, hexToRgba(b.color, .65));
-    gc.addColorStop(.5, hexToRgba(b.color, .2));
-    gc.addColorStop(1, hexToRgba(b.color, .7));
-    ctx.strokeStyle = gc; ctx.lineWidth = 2.5; ctx.shadowBlur = 12;
-    ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
 
-    // Flow dashes
-    ctx.setLineDash([4, 12]); ctx.lineDashOffset = -time*1.5;
-    ctx.strokeStyle = hexToRgba(b.color, .55*a); ctx.lineWidth = 1.4; ctx.shadowBlur = 6;
-    ctx.beginPath(); ctx.moveTo(sx,sy); ctx.lineTo(ex,ey); ctx.stroke();
+    // Tractor beam: widening trapezoid segments
+    const beamLen = Math.hypot(ex - sx, ey - sy);
+    const angle = Math.atan2(ey - sy, ex - sx);
+    const segments = 16;
+    const segLen = beamLen / segments;
+    const perp = { x: -Math.sin(angle), y: Math.cos(angle) };
+
+    for (let s = 0; s < segments; s++) {
+      const t = s / segments;
+      const tNext = (s + 1) / segments;
+      const w1 = 2 + t * 16;
+      const w2 = 2 + tNext * 16;
+      const wave = Math.sin(time * 0.05 + s * 0.5) * 2;
+      const wave2 = Math.sin(time * 0.05 + (s+1) * 0.5) * 2;
+
+      const p1x = sx + Math.cos(angle) * segLen * s + perp.x * (w1 + wave);
+      const p1y = sy + Math.sin(angle) * segLen * s + perp.y * (w1 + wave);
+      const p2x = sx + Math.cos(angle) * segLen * s - perp.x * (w1 + wave);
+      const p2y = sy + Math.sin(angle) * segLen * s - perp.y * (w1 + wave);
+      const p3x = sx + Math.cos(angle) * segLen * (s+1) - perp.x * (w2 + wave2);
+      const p3y = sy + Math.sin(angle) * segLen * (s+1) - perp.y * (w2 + wave2);
+      const p4x = sx + Math.cos(angle) * segLen * (s+1) + perp.x * (w2 + wave2);
+      const p4y = sy + Math.sin(angle) * segLen * (s+1) + perp.y * (w2 + wave2);
+
+      const colorPhase = (s + Math.floor(time * 0.08)) % 3;
+      const alphaM = colorPhase === 0 ? 0.25 : colorPhase === 1 ? 0.12 : 0.06;
+      ctx.fillStyle = hexToRgba(b.color, a * alphaM);
+
+      ctx.beginPath();
+      ctx.moveTo(p1x, p1y);
+      ctx.lineTo(p4x, p4y);
+      ctx.lineTo(p3x, p3y);
+      ctx.lineTo(p2x, p2y);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Center line (bright core)
+    ctx.strokeStyle = b.color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = a * 0.5;
+    ctx.setLineDash([3, 6]);
+    ctx.lineDashOffset = -time * 2;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
     ctx.setLineDash([]);
 
-    // Impact glow
-    ctx.globalAlpha = a*.5;
-    const ig = ctx.createRadialGradient(ex,ey,0,ex,ey,22);
-    ig.addColorStop(0, hexToRgba(b.color, .45));
+    // Impact glow at planet end
+    ctx.globalAlpha = a * 0.4;
+    const ig = ctx.createRadialGradient(ex,ey,0,ex,ey,18);
+    ig.addColorStop(0, hexToRgba(b.color, .4));
     ig.addColorStop(1, 'transparent');
     ctx.fillStyle = ig;
-    ctx.beginPath(); ctx.arc(ex,ey,22,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(ex,ey,18,0,Math.PI*2); ctx.fill();
+
     ctx.restore();
   });
 }
 
+/* ── DRAW: PLANET (Boss Galaga sprite) ────────── */
 function drawPlanet() {
   const glow = planetGlow;
   const pulse = .5 + .5 * Math.sin(time * .015);
-  const pulseSlow = .5 + .5 * Math.sin(time * .008);
+  const scale = PLANET_R / 130;
+  const px = 5 * scale; // pixel block size
 
-  // Outer pulsing emanation (always visible, grows with glow)
+  // Pulsing glow behind planet
   ctx.save();
-  const emanR = PLANET_R + 60 + pulse * 30 + glow * 15;
-  const em = ctx.createRadialGradient(CX,CY,PLANET_R*.7,CX,CY,emanR);
-  em.addColorStop(0, hexToRgba(PAL.bookCloth, .04 + pulse*.02 + glow*.015));
-  em.addColorStop(.4, hexToRgba(PAL.kraft, .02 + pulse*.01 + glow*.01));
-  em.addColorStop(.7, hexToRgba(PAL.manilla, .008 + pulseSlow*.005));
-  em.addColorStop(1, 'transparent');
-  ctx.fillStyle = em;
-  ctx.beginPath(); ctx.arc(CX,CY,emanR,0,Math.PI*2); ctx.fill();
-  ctx.restore();
-
-  // Secondary pulse ring (softer, offset timing)
-  ctx.save();
-  const pulse2R = PLANET_R + 35 + pulseSlow * 20;
-  const em2 = ctx.createRadialGradient(CX,CY,PLANET_R,CX,CY,pulse2R);
-  em2.addColorStop(0, hexToRgba(PAL.bookCloth, .06 + glow*.02));
-  em2.addColorStop(1, 'transparent');
-  ctx.fillStyle = em2;
-  ctx.beginPath(); ctx.arc(CX,CY,pulse2R,0,Math.PI*2); ctx.fill();
+  const glowR = PLANET_R * 1.1 + pulse * 18;
+  const grd = ctx.createRadialGradient(CX, CY, PLANET_R * 0.3, CX, CY, glowR);
+  grd.addColorStop(0, `rgba(60,30,120,${0.08 + glow * 0.025})`);
+  grd.addColorStop(0.5, `rgba(40,15,80,${0.04 + glow * 0.012})`);
+  grd.addColorStop(1, 'transparent');
+  ctx.fillStyle = grd;
+  ctx.beginPath(); ctx.arc(CX, CY, glowR, 0, Math.PI * 2); ctx.fill();
   ctx.restore();
 
   // Full illumination superglow
   if (glow > 3.5) {
     const sg = (glow-3.5)*2;
     ctx.save();
-    const sup = ctx.createRadialGradient(CX,CY,PLANET_R*.3,CX,CY,PLANET_R*3);
-    sup.addColorStop(0, hexToRgba(PAL.manilla, .1*sg));
-    sup.addColorStop(.4, hexToRgba(PAL.kraft, .04*sg));
+    const sup = ctx.createRadialGradient(CX,CY,PLANET_R*.3,CX,CY,PLANET_R*2.5);
+    sup.addColorStop(0, hexToRgba('#00FFFF', .06*sg));
+    sup.addColorStop(.4, hexToRgba('#6644CC', .03*sg));
     sup.addColorStop(1, 'transparent');
     ctx.fillStyle = sup;
-    ctx.beginPath(); ctx.arc(CX,CY,PLANET_R*3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(CX,CY,PLANET_R*2.5,0,Math.PI*2); ctx.fill();
     ctx.restore();
   }
 
-  // Planet body (warm gradient)
+  // Draw pixel-art planet procedurally
+  // Planet colors: deep blue body, teal continents, cyan highlights, dark ocean
+  const R = PLANET_R;
+  const gridSize = Math.ceil(R * 2 / px);
+  const halfGrid = gridSize / 2;
+
+  // Seed-based pseudo-random for stable continent shapes
+  function planetNoise(x, y) {
+    const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+    return n - Math.floor(n);
+  }
+
   ctx.save();
-  const body = ctx.createRadialGradient(CX-20,CY-22,8,CX,CY,PLANET_R);
-  body.addColorStop(0, glow > 3 ? '#3a3530' : '#262522');
-  body.addColorStop(1, glow > 3 ? '#201e1a' : '#1a1918');
-  ctx.fillStyle = body;
-  ctx.beginPath(); ctx.arc(CX,CY,PLANET_R,0,Math.PI*2); ctx.fill();
+  for (let gy = 0; gy < gridSize; gy++) {
+    for (let gx = 0; gx < gridSize; gx++) {
+      const lx = (gx - halfGrid + 0.5) * px;
+      const ly = (gy - halfGrid + 0.5) * px;
+      const dist = Math.hypot(lx, ly);
+      if (dist > R) continue;
 
-  // Illuminated sectors
-  for (let i = 0; i < 4; i++) {
-    if (!visited[i]) continue;
-    const sa = -Math.PI/2 + i*Math.PI/2 + .04;
-    const ea = sa + Math.PI/2 - .08;
-    ctx.save(); ctx.beginPath(); ctx.moveTo(CX,CY);
-    ctx.arc(CX,CY,PLANET_R-1,sa,ea); ctx.closePath();
-    ctx.fillStyle = hexToRgba(BRANDS[i].color, .08 + beamAlpha[i]*.05);
-    ctx.fill(); ctx.restore();
+      // Spherical UV mapping for surface texture
+      const nx = lx / R;
+      const ny = ly / R;
+      const nz = Math.sqrt(Math.max(0, 1 - nx*nx - ny*ny));
+
+      // Scrolling longitude for slow rotation
+      const lon = Math.atan2(nx, nz) + time * 0.002;
+      const lat = Math.asin(ny);
+
+      // Continent noise (layered)
+      const n1 = planetNoise(Math.floor(lon * 3), Math.floor(lat * 3));
+      const n2 = planetNoise(Math.floor(lon * 6 + 50), Math.floor(lat * 6 + 50));
+      const n3 = planetNoise(Math.floor(lon * 1.5 + 100), Math.floor(lat * 1.5 + 100));
+      const landValue = n1 * 0.5 + n2 * 0.3 + n3 * 0.2;
+
+      // Latitude bands for atmosphere
+      const absLat = Math.abs(lat);
+      const isLand = landValue > 0.45;
+      const isPolar = absLat > 1.2;
+      const isHighlight = nz > 0.85 && nx < -0.1 && ny < -0.1; // top-left light
+
+      // Edge darkening (limb)
+      const edgeFade = Math.pow(nz, 0.5);
+
+      let color;
+      if (isPolar) {
+        color = isHighlight ? '#443366' : '#2A1F44';
+      } else if (isLand) {
+        const detail = planetNoise(Math.floor(lon * 10 + 200), Math.floor(lat * 10 + 200));
+        if (detail > 0.6) color = '#3B2266'; // bright land (purple)
+        else color = '#2A1848'; // darker land
+      } else {
+        // Ocean
+        const detail = planetNoise(Math.floor(lon * 8 + 300), Math.floor(lat * 8 + 300));
+        if (detail > 0.7) color = '#1A1040'; // lighter deep
+        else if (isHighlight) color = '#140C33';
+        else color = '#0D0822'; // deepest dark
+      }
+
+      // Apply edge darkening
+      const r = parseInt(color.slice(1,3),16);
+      const g = parseInt(color.slice(3,5),16);
+      const bl = parseInt(color.slice(5,7),16);
+      const ef = 0.4 + 0.6 * edgeFade;
+      const gr = glow > 0 ? 1 + glow * 0.03 : 1;
+
+      ctx.fillStyle = `rgb(${Math.round(r*ef*gr)},${Math.round(g*ef*gr)},${Math.round(bl*ef*gr)})`;
+      ctx.fillRect(
+        Math.round(CX + lx - px/2),
+        Math.round(CY + ly - px/2),
+        Math.ceil(px), Math.ceil(px)
+      );
+    }
   }
+  ctx.restore();
 
-  // Surface pattern (warm concentric rings)
-  ctx.strokeStyle = hexToRgba(PAL.kraft, .03 + glow*.01);
-  ctx.lineWidth = .6;
-  for (let r = 22; r < PLANET_R; r += 20) {
-    ctx.beginPath(); ctx.arc(CX,CY,r,0,Math.PI*2); ctx.stroke();
-  }
-
-  // Rim light (warm Book Cloth) with pulse
-  const rimPulse = .18 + pulse * .06;
-  ctx.strokeStyle = hexToRgba(PAL.bookCloth, rimPulse + glow*.07);
-  ctx.lineWidth = 2.5;
-  ctx.shadowColor = hexToRgba(PAL.bookCloth, .2 + pulse*.15 + glow*.1);
-  ctx.shadowBlur = 20 + pulse * 10;
-  ctx.beginPath(); ctx.arc(CX,CY,PLANET_R,0,Math.PI*2); ctx.stroke();
-  ctx.shadowBlur = 0;
+  // Pixel rim highlight (top-left crescent)
+  ctx.save();
+  ctx.globalAlpha = 0.2 + pulse * 0.06;
+  ctx.strokeStyle = '#6644AA';
+  ctx.lineWidth = px;
+  ctx.beginPath();
+  ctx.arc(CX, CY, R - px * 0.5, Math.PI * 1.1, Math.PI * 1.7);
+  ctx.stroke();
   ctx.restore();
 
   // Energy ring (4 segments)
@@ -936,18 +910,18 @@ function drawPlanet() {
       ctx.strokeStyle = BRANDS[i].color; ctx.lineWidth = 3;
       ctx.shadowColor = BRANDS[i].color; ctx.shadowBlur = 18;
     } else {
-      ctx.strokeStyle = hexToRgba(PAL.cloudDk, .06); ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(68,68,102,0.06)'; ctx.lineWidth = 1;
     }
     ctx.stroke(); ctx.restore();
   }
 
-  // Center logos (24 Seven x Anthropic — vertically centered, equal weight)
+  // Center logos inside the planet
   ctx.save();
-  const cAlpha = .8 + glow * .06;
+  const cAlpha = .85 + glow * .05;
   const logo24 = logoImages['24seven'];
   const logoAn = logoImages['anthropic'];
-  const ls = PLANET_R / 130; // logo scale factor
-  const h24base = 44 * ls, gapBase = 10 * ls, xH = 14 * ls, hAnBase = 20 * ls;
+  const ls = scale;
+  const h24base = 40 * ls, gapBase = 6 * ls, xH = 12 * ls, hAnBase = 16 * ls;
   const blockH = h24base + gapBase + xH + gapBase + hAnBase;
   const blockTop = CY - blockH / 2;
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -955,86 +929,81 @@ function drawPlanet() {
     const h24 = h24base;
     const w24 = h24 * (logo24.naturalWidth / logo24.naturalHeight);
     ctx.globalAlpha = cAlpha;
-    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.manilla, .4); ctx.shadowBlur = 28 * ls; }
+    if (glow > 2) { ctx.shadowColor = hexToRgba('#00FFFF', .4); ctx.shadowBlur = 28 * ls; }
     ctx.drawImage(logo24, CX - w24/2, blockTop, w24, h24);
     ctx.shadowBlur = 0;
   }
-  ctx.font = `500 ${Math.round(14 * ls)}px 'DM Mono', monospace`;
-  ctx.fillStyle = hexToRgba(PAL.ivoryLt, cAlpha * .65);
-  ctx.globalAlpha = cAlpha * .65;
+  ctx.font = `400 ${Math.round(10 * ls)}px 'Press Start 2P', monospace`;
+  ctx.fillStyle = hexToRgba('#FFFFFF', cAlpha * .6);
+  ctx.globalAlpha = cAlpha * .6;
   ctx.fillText('×', CX, blockTop + h24base + gapBase + xH / 2);
   if (logoAn) {
     const hAn = hAnBase;
     const wAn = hAn * (logoAn.naturalWidth / logoAn.naturalHeight);
     ctx.globalAlpha = cAlpha;
-    if (glow > 2) { ctx.shadowColor = hexToRgba(PAL.ivoryLt, .35); ctx.shadowBlur = 22 * ls; }
+    if (glow > 2) { ctx.shadowColor = hexToRgba('#FFFFFF', .3); ctx.shadowBlur = 22 * ls; }
     ctx.drawImage(logoAn, CX - wAn/2, blockTop + h24base + gapBase + xH + gapBase, wAn, hAn);
     ctx.shadowBlur = 0;
   }
   ctx.restore();
 }
 
+/* ── DRAW: SATELLITES (Galaga enemy sprites) ──── */
 function drawSatellites() {
   BRANDS.forEach((b, i) => {
     const d = dst(player.x,player.y,b.x,b.y);
     const isNear = d < INTERACT_DIST * 2.2;
     const isVis = visited[i];
-    const rot = time * .006 + i * 1.5;
+    const scale = SAT_R / 38;
+    const px = 4 * scale;
 
     ctx.save();
-    // Proximity pulse
+
+    // Proximity indicator: flashing pixel square reticle
     if (isNear && !isVis) {
-      const pulse = .15 + .15 * Math.sin(time * .07);
-      ctx.beginPath(); ctx.arc(b.x,b.y,SAT_R+14+Math.sin(time*.04)*5,0,Math.PI*2);
-      ctx.strokeStyle = hexToRgba(b.color, pulse); ctx.lineWidth = 1.2; ctx.stroke();
+      const blinkOn = Math.floor(time * 0.08) % 2 === 0;
+      if (blinkOn) {
+        ctx.strokeStyle = b.color;
+        ctx.lineWidth = 2;
+        const rs = SAT_R + 12;
+        ctx.strokeRect(b.x - rs, b.y - rs, rs * 2, rs * 2);
+      }
     }
 
-    // Constellation-style node cluster (Anthropic illustration style)
-    // Central node
-    ctx.beginPath(); ctx.arc(b.x,b.y,SAT_R*.65,0,Math.PI*2);
-    ctx.fillStyle = hexToRgba(b.color, isVis ? .15 : .05);
-    ctx.fill();
-    ctx.strokeStyle = hexToRgba(b.color, isVis ? .7 : isNear ? .3 : .12);
-    ctx.lineWidth = isVis ? 2 : 1.2;
-    if (isVis) { ctx.shadowColor = b.color; ctx.shadowBlur = 24; }
-    else if (isNear) { ctx.shadowColor = b.color; ctx.shadowBlur = 10; }
-    ctx.stroke(); ctx.shadowBlur = 0;
+    // Draw pixel-art enemy sprite
+    const sprite = ENEMY_SPRITES[i];
+    const spriteW = sprite[0].length;
+    const spriteH = sprite.length;
+    const startX = b.x - (spriteW * px) / 2;
+    const startY = b.y - (spriteH * px) / 2;
 
-    // Orbiting sub-nodes (constellation style)
-    for (let j = 0; j < 4; j++) {
-      const na = rot + j * Math.PI/2;
-      const nr = SAT_R;
-      const nx = b.x + Math.cos(na)*nr, ny = b.y + Math.sin(na)*nr;
-      // Connecting line
-      ctx.strokeStyle = hexToRgba(b.color, isVis ? .25 : .08);
-      ctx.lineWidth = isVis ? 1.5 : .8;
-      ctx.beginPath(); ctx.moveTo(b.x,b.y); ctx.lineTo(nx,ny); ctx.stroke();
-      // Sub-node
-      ctx.fillStyle = hexToRgba(b.color, isVis ? .5 : .15);
-      ctx.beginPath(); ctx.arc(nx,ny, isVis ? 4 : 3,0,Math.PI*2); ctx.fill();
+    // Neon glow when visited
+    if (isVis) {
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 15;
+    } else if (isNear) {
+      ctx.shadowColor = b.color;
+      ctx.shadowBlur = 6;
     }
 
-    // Cross-connections between adjacent sub-nodes
-    for (let j = 0; j < 4; j++) {
-      const na1 = rot + j * Math.PI/2;
-      const na2 = rot + ((j+1)%4) * Math.PI/2;
-      const n1x = b.x + Math.cos(na1)*SAT_R, n1y = b.y + Math.sin(na1)*SAT_R;
-      const n2x = b.x + Math.cos(na2)*SAT_R, n2y = b.y + Math.sin(na2)*SAT_R;
-      ctx.strokeStyle = hexToRgba(b.color, isVis ? .1 : .03);
-      ctx.lineWidth = .6;
-      ctx.beginPath(); ctx.moveTo(n1x,n1y); ctx.lineTo(n2x,n2y); ctx.stroke();
+    for (let row = 0; row < spriteH; row++) {
+      for (let col = 0; col < spriteW; col++) {
+        const val = sprite[row][col];
+        if (val === 0) continue;
+        if (val === 1) ctx.fillStyle = isVis ? b.color : hexToRgba(b.color, isNear ? .7 : .35);
+        else if (val === 2) ctx.fillStyle = isVis ? '#FFFFFF' : hexToRgba('#FFFFFF', isNear ? .5 : .2);
+        else ctx.fillStyle = isVis ? '#111111' : hexToRgba('#111111', .3);
+        ctx.fillRect(
+          Math.round(startX + col * px),
+          Math.round(startY + row * px),
+          Math.ceil(px), Math.ceil(px)
+        );
+      }
     }
+    ctx.shadowBlur = 0;
     ctx.restore();
 
-    // Emoji
-    ctx.save();
-    const emojiSize = Math.round(20 * (SAT_R / 38));
-    ctx.font = emojiSize + 'px sans-serif';
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(b.emoji, b.x, b.y + 1);
-    ctx.restore();
-
-    // Logo label (per-brand height for equal visual width ~120-135px)
+    // Logo label below
     const logo = logoImages[b.id];
     if (logo) {
       const satScale = SAT_R / 38;
@@ -1051,7 +1020,7 @@ function drawSatellites() {
       ctx.restore();
     } else {
       ctx.save();
-      ctx.font = "600 10px 'DM Mono', monospace";
+      ctx.font = "400 7px 'Press Start 2P', monospace";
       ctx.textAlign = 'center';
       ctx.fillStyle = hexToRgba(b.color, isNear ? .85 : .35);
       ctx.fillText(b.name, b.x, b.y + SAT_R + 22);
@@ -1060,104 +1029,105 @@ function drawSatellites() {
   });
 }
 
+/* ── DRAW: EXHAUST (pixel thrust) ────────────── */
 function drawExhaust() {
   exhaust.forEach(p => {
     const t = p.life;
-    ctx.globalAlpha = t * .6;
-    // Warm exhaust (Book Cloth tones)
-    const r = 212, g = Math.floor(120 + 60*t), bl = Math.floor(80 + 12*t);
-    ctx.fillStyle = `rgb(${r},${g},${bl})`;
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r*t,0,Math.PI*2); ctx.fill();
+    ctx.globalAlpha = t * 0.7;
+    ctx.fillStyle = Math.random() > 0.5 ? '#00FFFF' : '#FFFFFF';
+    const sz = Math.max(1, Math.round(p.r * t * 0.8));
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), sz, sz);
   });
   ctx.globalAlpha = 1;
 }
 
+/* ── DRAW: SHIP (Galaga fighter) ─────────────── */
 function drawShip() {
   const spd = Math.hypot(player.vx, player.vy);
   ctx.save();
   ctx.translate(player.x, player.y);
   ctx.rotate(shipAngle);
 
-  // Engine glow (warm)
-  if (spd > .5) {
-    ctx.save();
-    const eg = ctx.createRadialGradient(-10,0,0,-10,0,18);
-    eg.addColorStop(0, hexToRgba(PAL.bookCloth, Math.min(.35, spd*.05)));
-    eg.addColorStop(1, 'transparent');
-    ctx.fillStyle = eg;
-    ctx.beginPath(); ctx.arc(-10,0,18,0,Math.PI*2); ctx.fill();
-    ctx.restore();
+  const scale = SAT_R / 38;
+  const px = 3 * scale;
+  const spriteW = FIGHTER_SPRITE[0].length;
+  const spriteH = FIGHTER_SPRITE.length;
+  const startX = -(spriteW * px) / 2;
+  const startY = -(spriteH * px) / 2;
+
+  // Ship glow
+  ctx.shadowColor = '#FFFFFF';
+  ctx.shadowBlur = 8;
+
+  for (let row = 0; row < spriteH; row++) {
+    for (let col = 0; col < spriteW; col++) {
+      const val = FIGHTER_SPRITE[row][col];
+      if (val === 0) continue;
+      ctx.fillStyle = FIGHTER_COLORS[val];
+      ctx.fillRect(
+        Math.round(startX + col * px),
+        Math.round(startY + row * px),
+        Math.ceil(px), Math.ceil(px)
+      );
+    }
+  }
+  ctx.shadowBlur = 0;
+
+  // Engine glow when moving
+  if (spd > 0.5) {
+    const glowAlpha = Math.min(0.6, spd * 0.08);
+    ctx.fillStyle = `rgba(0,255,255,${glowAlpha})`;
+    ctx.fillRect(
+      Math.round(startX - px * 2),
+      Math.round(-px),
+      Math.ceil(px * 2), Math.ceil(px * 2)
+    );
   }
 
-  // Ship body (ivory)
-  ctx.shadowColor = hexToRgba(PAL.ivoryLt, .35);
-  ctx.shadowBlur = 14;
-  ctx.fillStyle = PAL.ivoryLt;
-  ctx.beginPath();
-  ctx.moveTo(20, 0);
-  ctx.lineTo(-9, -10);
-  ctx.lineTo(-5, -3);
-  ctx.lineTo(-9, 0);
-  ctx.lineTo(-5, 3);
-  ctx.lineTo(-9, 10);
-  ctx.closePath();
-  ctx.fill();
-
-  // Windshield (warm blue)
-  ctx.shadowBlur = 0;
-  ctx.fillStyle = PAL.kraft;
-  ctx.beginPath();
-  ctx.moveTo(13, 0);
-  ctx.lineTo(4, -4);
-  ctx.lineTo(4, 4);
-  ctx.closePath();
-  ctx.fill();
-
-  // Engine nozzle (Book Cloth)
-  ctx.fillStyle = PAL.bookCloth;
-  ctx.fillRect(-10, -3, 5, 6);
   ctx.restore();
 }
 
+/* ── DRAW: CELEBRATION (pixel confetti) ──────── */
 function drawCelebParticles() {
   celebParticles.forEach(p => {
     ctx.globalAlpha = p.life;
     ctx.fillStyle = p.color;
-    ctx.shadowColor = p.color; ctx.shadowBlur = 10;
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2); ctx.fill();
-    ctx.shadowBlur = 0;
+    const sz = Math.max(1, Math.round(p.r * p.life));
+    ctx.fillRect(Math.round(p.x), Math.round(p.y), sz, sz);
   });
   ctx.globalAlpha = 1;
 }
 
+/* ── DRAW: VIGNETTE (CRT effect) ─────────────── */
 function drawVignette() {
-  const g = ctx.createRadialGradient(CX,CY,250,CX,CY,H*.9);
+  const g = ctx.createRadialGradient(CX,CY,Math.min(W,H)*.35,CX,CY,Math.max(W,H)*.7);
   g.addColorStop(0, 'transparent');
-  g.addColorStop(1, 'rgba(20,20,19,.45)');
+  g.addColorStop(0.8, 'rgba(0,0,0,0.15)');
+  g.addColorStop(1, 'rgba(0,0,0,0.5)');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
 }
 
+/* ── PROMPT UPDATE ────────────────────────────── */
 function updatePrompt() {
   const el = document.getElementById('interact-prompt');
-  // Convert logical coords to CSS coords
   const rect = canvas.getBoundingClientRect();
   const sx = rect.width / W, sy = rect.height / H;
   if (nearSat >= 0 && modalOpen < 0 && !centerModalOpen) {
     const b = BRANDS[nearSat];
-    el.style.opacity = .55 + Math.sin(time*.07)*.3;
+    el.style.opacity = 1;
     el.style.left = (b.x * sx) + 'px';
     el.style.top = ((b.y - SAT_R - 32) * sy) + 'px';
     el.style.transform = 'translateX(-50%)';
-    el.style.color = visited[nearSat] ? b.color : PAL.ivoryLt;
-    el.textContent = visited[nearSat] ? (isTouchDevice ? 'TAP TO REVISIT' : 'SPACE TO REVISIT') : (isTouchDevice ? 'TAP TO DOCK' : 'SPACE TO DOCK');
+    el.style.color = visited[nearSat] ? b.color : '#FFD700';
+    el.textContent = visited[nearSat] ? (isTouchDevice ? 'TAP TO REVISIT' : 'FIRE TO REVISIT') : (isTouchDevice ? 'TAP TO DOCK' : 'FIRE TO DOCK');
   } else if (nearCenter && modalOpen < 0 && !centerModalOpen) {
-    el.style.opacity = .55 + Math.sin(time*.07)*.3;
+    el.style.opacity = 1;
     el.style.left = (CX * sx) + 'px';
     el.style.top = ((CY - PLANET_R - 32) * sy) + 'px';
     el.style.transform = 'translateX(-50%)';
-    el.style.color = PAL.bookCloth;
-    el.textContent = isTouchDevice ? 'TAP TO EXPLORE' : 'SPACE TO EXPLORE';
+    el.style.color = '#FF0040';
+    el.textContent = isTouchDevice ? 'TAP TO EXPLORE' : 'FIRE TO EXPLORE';
   } else {
     el.style.opacity = 0;
   }
@@ -1186,7 +1156,6 @@ function updateClaudeAsterisk() {
     claudeAsterisk.x += Math.cos(claudeAsterisk.pathAngle) * claudeAsterisk.speed;
     claudeAsterisk.y += Math.sin(claudeAsterisk.pathAngle) * claudeAsterisk.speed;
     claudeAsterisk.angle += claudeAsterisk.spinSpeed;
-    // Slight curve
     claudeAsterisk.pathAngle += (Math.sin(time * 0.005) * 0.002);
     if (claudeAsterisk.x < -80 || claudeAsterisk.x > W + 80 || claudeAsterisk.y < -80 || claudeAsterisk.y > H + 80) {
       claudeAsterisk.active = false;
@@ -1199,11 +1168,14 @@ function updateClaudeAsterisk() {
 function drawClaudeAsterisk() {
   if (!claudeAsterisk.active || !claudeImg.complete) return;
   ctx.save();
-  ctx.globalAlpha = 0.55;
+  ctx.globalAlpha = 0.4;
   ctx.translate(claudeAsterisk.x, claudeAsterisk.y);
   ctx.rotate(claudeAsterisk.angle);
+  ctx.shadowColor = '#FF6600';
+  ctx.shadowBlur = 8;
   const sz = 48;
   ctx.drawImage(claudeImg, -sz/2, -sz/2, sz, sz);
+  ctx.shadowBlur = 0;
   ctx.restore();
 }
 
@@ -1251,7 +1223,6 @@ if (isTouchDevice) {
     thumbEl.style.transform = `translate(${dx}px, ${dy}px)`;
   }
 
-  // Dock button
   dockBtn.addEventListener('touchstart', e => {
     e.preventDefault();
     if (modalOpen >= 0) closeModal();
@@ -1260,7 +1231,6 @@ if (isTouchDevice) {
     else if (nearCenter) openCenterModal();
   }, { passive: false });
 
-  // Tap on canvas to interact with satellites/planet
   canvas.addEventListener('touchstart', e => {
     if (modalOpen >= 0 || centerModalOpen || completionShown) return;
     const t = e.touches[0];
@@ -1273,14 +1243,12 @@ if (isTouchDevice) {
     if (dst(mx, my, CX, CY) < PLANET_R * 1.2) openCenterModal();
   }, { passive: true });
 
-  // Update intro hint text for touch
-  document.getElementById('intro-hint').innerHTML = 'USE JOYSTICK TO FLY &middot; TAP SATELLITES TO DOCK';
+  document.getElementById('intro-hint').innerHTML = 'USE JOYSTICK TO FLY &middot; TAP SQUADRONS TO DOCK';
 
-  // Update welcome card for touch
   const keysEl = document.querySelector('#welcome-card .keys');
-  if (keysEl) keysEl.innerHTML = '<span style="font-size:20px">👆</span> Joystick to fly &nbsp;&middot;&nbsp; Tap satellites to dock';
+  if (keysEl) keysEl.innerHTML = '<span style="font-size:20px">👆</span> Joystick to fly &nbsp;&middot;&nbsp; Tap squadrons to dock';
   const mouseNote = document.querySelector('#welcome-card p[style]');
-  if (mouseNote) mouseNote.textContent = 'Tap satellites or use the dock button when nearby.';
+  if (mouseNote) mouseNote.textContent = 'Tap squadrons or use the dock button when nearby.';
 }
 
 /* ── GAME LOOP ────────────────────────────────── */
@@ -1292,8 +1260,7 @@ document.fonts.ready.then(async () => {
   resizeCanvas();
   player.x = CX - 200 * (PLANET_R / 130);
   player.y = CY - 150 * (PLANET_R / 130);
-  initStars(); initNebulae(); initDust(); initConstellations();
-  // Welcome overlay
+  initStars();
   const welcomeOverlay = document.getElementById('welcome-overlay');
   document.getElementById('welcome-btn').addEventListener('click', () => {
     welcomeOverlay.style.display = 'none';
