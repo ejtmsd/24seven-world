@@ -85,6 +85,56 @@ canvas{display:block;width:100%;height:100%;cursor:none}
 #welcome-card .keys kbd{display:inline-block;padding:4px 10px;background:#F0F0EB;border:1px solid #E5E4DF;border-radius:5px;font-family:'DM Mono',monospace;font-size:12px;margin:0 2px}
 #welcome-btn{display:inline-block;margin-top:20px;padding:14px 44px;border:none;border-radius:10px;background:#CC785C;color:#FAFAF7;font-family:'Inter',sans-serif;font-size:16px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:filter .2s}
 #welcome-btn:hover{filter:brightness(1.1)}
+/* ── MOBILE TOUCH JOYSTICK ───────────────────── */
+#touch-joystick{display:none;position:absolute;bottom:28px;left:28px;width:120px;height:120px;z-index:15;pointer-events:auto}
+#touch-joystick-base{width:120px;height:120px;border-radius:50%;background:rgba(250,250,247,.06);border:1.5px solid rgba(250,250,247,.1)}
+#touch-joystick-thumb{position:absolute;top:50%;left:50%;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;background:rgba(204,120,92,.35);border:1.5px solid rgba(204,120,92,.5);pointer-events:none;transition:none}
+#touch-dock-btn{display:none;position:absolute;bottom:48px;right:28px;width:72px;height:72px;border-radius:50%;background:rgba(204,120,92,.25);border:2px solid rgba(204,120,92,.5);z-index:15;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:rgba(250,250,247,.7);text-align:center;line-height:72px}
+/* ── MOBILE RESPONSIVE ───────────────────────── */
+@media(max-width:768px){
+  #nav-bar{padding:8px 14px;gap:8px}
+  #nav-logo{font-size:14px;letter-spacing:1.5px}
+  .nav-anthro-logo{height:10px}
+  #nav-headline{font-size:12px;padding:0 8px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  #nav-score{font-size:11px}
+  #contact-strip{flex-direction:column;gap:6px;padding:10px 14px;font-size:11px}
+  #contact-strip .sep{display:none}
+  #ticker{height:32px}
+  #ticker-track{font-size:10px}
+  #ticker-live{font-size:9px;padding:0 10px}
+  #modal-card,#center-card{width:92vw;max-height:80vh;padding:28px 22px 24px}
+  .modal-brand-name{font-size:28px!important}
+  .modal-tagline{font-size:10px;letter-spacing:2px;margin-bottom:18px}
+  .modal-signal{padding:12px 14px;font-size:11.5px;margin-bottom:18px}
+  .modal-signal .signal-label{font-size:9px}
+  .modal-desc{font-size:14px;margin-bottom:22px}
+  .modal-cta{font-size:14px;padding:14px}
+  .modal-kicker{font-size:10px}
+  #completion-card{padding:32px 24px;max-width:92vw}
+  .comp-headline{font-size:32px}
+  .comp-sub{font-size:14px;margin-bottom:24px}
+  .comp-cta{font-size:17px;padding:16px 36px}
+  .comp-contacts{font-size:12px;line-height:1.7}
+  .comp-eyebrow{font-size:10px;letter-spacing:2px}
+  .comp-chips{gap:6px;margin-bottom:24px}
+  .comp-chip{font-size:9px;padding:5px 12px}
+  #welcome-card{max-width:88vw;padding:32px 24px}
+  #welcome-card h2{font-size:26px}
+  #welcome-card p{font-size:13px}
+  #welcome-card .keys{font-size:11px}
+  #welcome-card .keys kbd{padding:3px 8px;font-size:10px}
+  #welcome-btn{font-size:15px;padding:12px 36px}
+  #intro-hint{font-size:11px;bottom:160px}
+  #interact-prompt{font-size:11px}
+  #touch-joystick{display:block}
+  #touch-dock-btn{display:block}
+}
+@media(max-width:400px){
+  #nav-headline{display:none}
+  #contact-strip{font-size:10px}
+  .modal-brand-name{font-size:24px!important}
+  .comp-headline{font-size:26px}
+}
 </style>
 </head>
 <body>
@@ -98,6 +148,8 @@ canvas{display:block;width:100%;height:100%;cursor:none}
   <canvas id="game"></canvas>
   <div id="interact-prompt" style="opacity:0">SPACE TO DOCK</div>
   <div id="intro-hint">WASD / ARROW KEYS TO FLY &middot; SPACE TO DOCK WITH SATELLITES</div>
+  <div id="touch-joystick"><div id="touch-joystick-base"><div id="touch-joystick-thumb"></div></div></div>
+  <div id="touch-dock-btn">DOCK</div>
 </div>
 <div id="contact-strip">
   <span>Nicole Greene &middot; ngreene@thesagegroup.co &middot; VP Client Services</span>
@@ -530,6 +582,11 @@ function update() {
   if (keys['ArrowRight'] || keys['KeyD']) player.vx += accel;
   if (keys['ArrowUp']    || keys['KeyW']) player.vy -= accel;
   if (keys['ArrowDown']  || keys['KeyS']) player.vy += accel;
+  // Touch joystick input
+  if (touchJoy.active) {
+    player.vx += touchJoy.dx * accel;
+    player.vy += touchJoy.dy * accel;
+  }
   player.vx *= fric; player.vy *= fric;
   if (Math.abs(player.vx) < .08) player.vx = 0;
   if (Math.abs(player.vy) < .08) player.vy = 0;
@@ -567,6 +624,17 @@ function update() {
     if (dst(player.x, player.y, BRANDS[i].x, BRANDS[i].y) < INTERACT_DIST) { nearSat = i; break; }
   }
   nearCenter = nearSat < 0 && dst(player.x, player.y, CX, CY) < PLANET_R + 20;
+  // Update dock button visibility on touch devices
+  if (isTouchDevice) {
+    const dockBtn = document.getElementById('touch-dock-btn');
+    if (nearSat >= 0 || nearCenter) {
+      dockBtn.style.opacity = '1';
+      dockBtn.textContent = nearSat >= 0 ? 'DOCK' : 'EXPLORE';
+    } else {
+      dockBtn.style.opacity = '.3';
+      dockBtn.textContent = 'DOCK';
+    }
+  }
 
   dust.forEach(p => {
     p.x += p.vx; p.y += p.vy;
@@ -1075,14 +1143,14 @@ function updatePrompt() {
     el.style.top = ((b.y - SAT_R - 32) * sy) + 'px';
     el.style.transform = 'translateX(-50%)';
     el.style.color = visited[nearSat] ? b.color : PAL.ivoryLt;
-    el.textContent = visited[nearSat] ? 'SPACE TO REVISIT' : 'SPACE TO DOCK';
+    el.textContent = visited[nearSat] ? (isTouchDevice ? 'TAP TO REVISIT' : 'SPACE TO REVISIT') : (isTouchDevice ? 'TAP TO DOCK' : 'SPACE TO DOCK');
   } else if (nearCenter && modalOpen < 0 && !centerModalOpen) {
     el.style.opacity = .55 + Math.sin(time*.07)*.3;
     el.style.left = (CX * sx) + 'px';
     el.style.top = ((CY - PLANET_R - 32) * sy) + 'px';
     el.style.transform = 'translateX(-50%)';
     el.style.color = PAL.bookCloth;
-    el.textContent = 'SPACE TO EXPLORE';
+    el.textContent = isTouchDevice ? 'TAP TO EXPLORE' : 'SPACE TO EXPLORE';
   } else {
     el.style.opacity = 0;
   }
@@ -1130,6 +1198,82 @@ function drawClaudeAsterisk() {
   const sz = 48;
   ctx.drawImage(claudeImg, -sz/2, -sz/2, sz, sz);
   ctx.restore();
+}
+
+/* ── TOUCH CONTROLS ──────────────────────────── */
+const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+const touchJoy = { active: false, startX: 0, startY: 0, dx: 0, dy: 0 };
+
+if (isTouchDevice) {
+  const joystickEl = document.getElementById('touch-joystick');
+  const thumbEl = document.getElementById('touch-joystick-thumb');
+  const dockBtn = document.getElementById('touch-dock-btn');
+  const maxDist = 40;
+
+  joystickEl.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    const rect = joystickEl.getBoundingClientRect();
+    touchJoy.active = true;
+    touchJoy.startX = rect.left + rect.width / 2;
+    touchJoy.startY = rect.top + rect.height / 2;
+    handleJoystickMove(t.clientX, t.clientY);
+  }, { passive: false });
+
+  joystickEl.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!touchJoy.active) return;
+    handleJoystickMove(e.touches[0].clientX, e.touches[0].clientY);
+  }, { passive: false });
+
+  joystickEl.addEventListener('touchend', e => {
+    e.preventDefault();
+    touchJoy.active = false;
+    touchJoy.dx = 0;
+    touchJoy.dy = 0;
+    thumbEl.style.transform = 'translate(0px, 0px)';
+  }, { passive: false });
+
+  function handleJoystickMove(cx, cy) {
+    let dx = cx - touchJoy.startX;
+    let dy = cy - touchJoy.startY;
+    const dist = Math.hypot(dx, dy);
+    if (dist > maxDist) { dx = dx / dist * maxDist; dy = dy / dist * maxDist; }
+    touchJoy.dx = dx / maxDist;
+    touchJoy.dy = dy / maxDist;
+    thumbEl.style.transform = `translate(${dx}px, ${dy}px)`;
+  }
+
+  // Dock button
+  dockBtn.addEventListener('touchstart', e => {
+    e.preventDefault();
+    if (modalOpen >= 0) closeModal();
+    else if (centerModalOpen) closeCenterModal();
+    else if (nearSat >= 0) openModal(nearSat);
+    else if (nearCenter) openCenterModal();
+  }, { passive: false });
+
+  // Tap on canvas to interact with satellites/planet
+  canvas.addEventListener('touchstart', e => {
+    if (modalOpen >= 0 || centerModalOpen || completionShown) return;
+    const t = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const mx = (t.clientX - rect.left) * (W / rect.width);
+    const my = (t.clientY - rect.top) * (H / rect.height);
+    for (let i = 0; i < 4; i++) {
+      if (dst(mx, my, BRANDS[i].x, BRANDS[i].y) < INTERACT_DIST * 1.5) { openModal(i); return; }
+    }
+    if (dst(mx, my, CX, CY) < PLANET_R * 1.2) openCenterModal();
+  }, { passive: true });
+
+  // Update intro hint text for touch
+  document.getElementById('intro-hint').innerHTML = 'USE JOYSTICK TO FLY &middot; TAP SATELLITES TO DOCK';
+
+  // Update welcome card for touch
+  const keysEl = document.querySelector('#welcome-card .keys');
+  if (keysEl) keysEl.innerHTML = '<span style="font-size:20px">👆</span> Joystick to fly &nbsp;&middot;&nbsp; Tap satellites to dock';
+  const mouseNote = document.querySelector('#welcome-card p[style]');
+  if (mouseNote) mouseNote.textContent = 'Tap satellites or use the dock button when nearby.';
 }
 
 /* ── GAME LOOP ────────────────────────────────── */
